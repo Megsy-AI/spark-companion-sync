@@ -18,25 +18,14 @@
     <link rel="dns-prefetch" href="https://ltgampdtawuefwwayncx.supabase.co" />
     <link rel="preconnect" href="https://telegram.org" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://richinfo.co/richpartners/telegram/js/tg-ob.js"></script>
+    <!-- Ad SDKs are loaded on demand (only when the user taps "Watch Ad"),
+         so no automatic banners/push ads run across the app. -->
     <script>
-      window.addEventListener("load", function () {
-        try {
-          window.TelegramAdsController = new TelegramAdsController();
-          window.TelegramAdsController.initialize({
-            pubId: "998796",
-            appId: "8586",
-          });
-        } catch (e) {
-          console.warn("TelegramAdsController init failed", e);
-        }
-      });
-    </script>
-    <!-- Adsgram fallback ads source (Reward block, public id) -->
-    <script>
+      window.RICHADS_PUB_ID = "998796";
+      window.RICHADS_APP_ID = "8586";
       window.ADSGRAM_BLOCK_ID = "43448";
     </script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
   </head>
   <body>
     <div id="root"></div>
