@@ -16,6 +16,7 @@ import { PaymentError, sendTonPayment } from "@/lib/ton";
 import { purchaseServerForTelegram, verifyTonOnChain } from "@/lib/game-api";
 import { usePaymentDiscount } from "@/hooks/use-payment-discount";
 import DiscountBanner from "@/components/DiscountBanner";
+import NftExplainer from "@/components/NftExplainer";
 
 
 const TON_ICON = "/images/gram-icon.png";
@@ -165,6 +166,8 @@ const ServersPage = () => {
     <div className="min-h-screen pb-28">
       <SpotlightHero title="Servers">
       <div className="px-5 pt-6">
+
+      <NftExplainer />
 
       <DiscountBanner discount={discount} thinking={offerThinking} onSmartOffer={() => void handleSmartOffer("servers")} />
 
