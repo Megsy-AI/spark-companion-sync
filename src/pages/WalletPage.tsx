@@ -14,6 +14,7 @@ import { PaymentError, sendTonPayment, TON_FEE_BUFFER } from "@/lib/ton";
 import { createTransaction, isWalletVerified, verifyTonOnChain } from "@/lib/game-api";
 import { payWithStars, STARS_PRICES, type StarsProductId } from "@/lib/stars";
 import TelegramStar from "@/components/TelegramStar";
+import { useCoinPrices, formatUsd } from "@/hooks/use-coin-prices";
 
 import novaIconAsset from "@/assets/nova-icon.jpg.asset.json";
 const NOVA_ICON = novaIconAsset.url;
@@ -39,6 +40,7 @@ const WalletPage = () => {
   const navigate = useNavigate();
   const [tonConnectUI] = useTonConnectUI();
   const address = useTonAddress();
+  const markets = useCoinPrices();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -303,7 +305,7 @@ const WalletPage = () => {
       >
         <p className="paper-eyebrow">Total balance</p>
         <h2 className="mt-1 font-display text-[44px] leading-none tracking-tight text-foreground">
-          ${(user.tonBalance * 3.5 + user.usdtBalance + Number(user.rewardBalance ?? 0)).toFixed(2)}
+          ${(user.tonBalance * (markets["the-open-network"]?.price || TON_USD) + user.usdtBalance + Number(user.rewardBalance ?? 0)).toFixed(2)}
         </h2>
 
         <div className="mt-5 grid grid-cols-2 gap-2.5">
