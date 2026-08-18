@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Power, Lock, TrendingUp, ChevronRight } from "lucide-react";
+import { Power, Lock, TrendingUp, ChevronRight, ArrowDownToLine, ArrowUpFromLine, ShieldCheck, Copy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PaymentError, sendTonPayment, TON_FEE_BUFFER } from "@/lib/ton";
 import { createTransaction, isWalletVerified, verifyTonOnChain } from "@/lib/game-api";
