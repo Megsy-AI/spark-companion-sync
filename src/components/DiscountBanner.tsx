@@ -36,43 +36,57 @@ const DiscountBanner = ({ discount, onSmartOffer, thinking }: Props) => {
     <motion.div
       initial={{ opacity: 0, y: -6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass glass-panel mb-4 overflow-hidden rounded-2xl border border-border p-3.5"
+      className="paper-card mb-5 overflow-hidden p-4"
     >
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/12">
-          {hasDiscount ? <Crown className={`h-5 w-5 ${accent}`} /> : <Sparkles className="h-5 w-5 text-primary" />}
+      <div className="flex items-start gap-4">
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-card">
+          <img
+            src={discountArt}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            width={512}
+            height={512}
+            className="h-full w-full object-cover"
+          />
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-sm font-bold text-foreground">
-            {discount.first_purchase
-              ? "First purchase — 20% off"
-              : hasDiscount
-                ? `${discount.tier_label} member`
-                : "Unlock member discounts"}
-          </p>
-          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="paper-eyebrow">{hasDiscount ? discount.tier_label : "Member pricing"}</p>
+              <p className="font-display text-lg leading-tight text-foreground">
+                {discount.first_purchase
+                  ? "First purchase, 20% off"
+                  : hasDiscount
+                    ? `You save ${discount.discount_pct}% on every buy`
+                    : "Unlock member discounts"}
+              </p>
+            </div>
+            <span
+              className={`shrink-0 rounded-full border border-border bg-card px-2.5 py-1 font-display text-xs font-bold ${hasDiscount ? accent : "text-muted-foreground"}`}
+            >
+              -{discount.discount_pct}%
+            </span>
+          </div>
+
+          <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
             {remaining !== null && nextPct !== null
               ? `${remaining} Gram more → ${nextPct}% off forever`
               : "Max tier — best price on everything"}
           </p>
+
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+            <motion.div
+              className="h-full rounded-full bg-foreground"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
         </div>
-
-        <span
-          className={`shrink-0 rounded-full bg-primary/12 px-2.5 py-1 font-display text-xs font-bold ${hasDiscount ? accent : "text-muted-foreground"}`}
-        >
-          -{discount.discount_pct}%
-        </span>
       </div>
 
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5 }}
-        />
-      </div>
 
       {hasAi ? (
         <div className="mt-3 rounded-xl border border-primary/25 bg-primary/8 px-3 py-2.5">
