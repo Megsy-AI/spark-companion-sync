@@ -217,7 +217,7 @@ const AviatorGame = () => {
 
       {/* Space */}
       <div
-        className="relative h-[300px] overflow-hidden rounded-[28px] border border-white/10"
+        className="relative h-[420px] overflow-hidden rounded-[28px] border border-white/10"
         style={{
           background:
             "radial-gradient(120% 90% at 18% 8%, rgba(120,80,255,0.22), transparent 60%), radial-gradient(100% 80% at 88% 92%, hsl(var(--aviator) / 0.22), transparent 62%), linear-gradient(180deg, #070a1c 0%, #05061a 55%, #020209 100%)",
