@@ -4,7 +4,7 @@ import TasksPage from "@/pages/TasksPage";
 import ServersPage from "@/pages/ServersPage";
 import WalletPage from "@/pages/WalletPage";
 import StakingPage from "@/pages/StakingPage";
-import AiPage from "@/pages/AiPage";
+import GamesPage from "@/pages/GamesPage";
 import AdminPage from "@/pages/AdminPage";
 import AttackShopPage from "@/pages/AttackShopPage";
 import NotFound from "@/pages/NotFound";
@@ -30,7 +30,7 @@ export {
   ServersPage,
   WalletPage,
   StakingPage,
-  AiPage,
+  GamesPage,
   AdminPage,
   AttackShopPage,
   NotFound,
