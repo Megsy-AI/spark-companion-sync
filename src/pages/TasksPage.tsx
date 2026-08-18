@@ -193,36 +193,30 @@ const TasksPage = () => {
                       onClick={() => void handleTask(task)}>
                       <div className="p-3.5">
                         <div className="flex items-center gap-3.5">
-                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-border bg-card">
+                          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-border bg-card">
                             <img
                               src={artForTask(task.title)}
                               alt=""
                               loading="lazy"
                               decoding="async"
-                              width={512}
-                              height={512}
+                              width={256}
+                              height={256}
                               className="h-full w-full object-cover"
                             />
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <p className="font-display text-[15px] leading-tight text-foreground">{task.title}</p>
-                            <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">
-                              {task.verification_type !== 'none' && task.verification_type !== 'auto'
-                                ? (VERIFICATION_LABELS[task.verification_type] || "Complete requirement")
-                                : "Open the mini app, then come back"}
-                            </p>
-                            <span className="mt-2 inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-bold text-foreground">
-                              <Zap className="h-3 w-3" />
+                            <p className="truncate font-display text-[15px] leading-tight text-foreground">{task.title}</p>
+                            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
                               +{task.reward_amount} {label}
-                            </span>
+                            </p>
                           </div>
 
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); void handleTask(task); }}
                             disabled={claiming === task.id}
-                            className="btn-ink h-10 w-16 shrink-0 text-[11px] font-semibold uppercase tracking-widest"
+                            className="btn-ink h-9 min-w-[64px] shrink-0 rounded-full px-4 text-[11px] font-semibold uppercase tracking-widest disabled:opacity-60"
                           >
                             {claiming === task.id ? "…" : "Go"}
                           </button>
@@ -237,6 +231,7 @@ const TasksPage = () => {
 
                     </motion.div>
                   );
+
                 })}
 
               </AnimatePresence>
