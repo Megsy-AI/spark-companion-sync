@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import ServerArtwork from "@/components/ServerArtwork";
-import CreateNftButton from "@/components/CreateNftButton";
+import GemmyCollection from "@/components/GemmyCollection";
 import { swr } from "@/lib/cache";
 import CachedImage from "@/components/CachedImage";
 import { payWithStars, starsForTon } from "@/lib/stars";
@@ -167,9 +167,7 @@ const ServersPage = () => {
 
       <DiscountBanner discount={discount} thinking={offerThinking} onSmartOffer={() => void handleSmartOffer("servers")} />
 
-      <div className="mb-5">
-        <CreateNftButton onCreated={() => void loadMyNfts()} />
-      </div>
+      <GemmyCollection />
 
       {myNfts.length > 0 && (
         <div className="mb-6">
