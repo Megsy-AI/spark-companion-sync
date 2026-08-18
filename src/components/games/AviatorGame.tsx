@@ -40,7 +40,7 @@ const chipTone = (m: number) =>
     ? "text-[hsl(var(--aviator-glow))] border-[hsl(var(--aviator)/0.5)] bg-[hsl(var(--aviator)/0.12)]"
     : m >= 2
       ? "text-primary border-primary/40 bg-primary/10"
-      : "text-muted-foreground border-white/12 bg-white/[0.04]";
+      : "text-white/80 border-white/20 bg-white/[0.07]";
 
 const NAMES = ["a***i", "m***o", "s***a", "k***l", "n***r", "d***z", "y***i", "o***r", "l***a", "r***a"];
 
@@ -337,7 +337,7 @@ const AviatorGame = () => {
           <AnimatePresence mode="wait">
             {phase === "betting" ? (
               <motion.div key="wait" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <p className="text-[10px] uppercase tracking-[0.38em] text-muted-foreground">Next round in</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">Next round in</p>
                 <p className="mt-2 font-display text-[40px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
                 <div className="mx-auto mt-3 h-[3px] w-32 overflow-hidden rounded-full bg-white/10">
                   <div
@@ -375,10 +375,10 @@ const AviatorGame = () => {
             {fmt(queued)} Gram in play
           </span>
         )}
-        <span className="absolute right-4 top-4 text-[11px] text-muted-foreground">Balance {fmt(balance)}</span>
+        <span className="absolute right-4 top-4 text-[12px] font-semibold text-white/80">Balance {fmt(balance)}</span>
       </div>
 
-      {result && <p className="text-center text-[12px] text-muted-foreground">{result}</p>}
+      {result && <p className="text-center text-[13px] font-medium text-white/85">{result}</p>}
 
       {/* Bet panel */}
       <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-2.5">
@@ -409,7 +409,7 @@ const AviatorGame = () => {
                   key={q}
                   type="button"
                   onClick={() => setStake(q)}
-                  className="rounded-xl border border-white/[0.08] bg-white/[0.03] py-1.5 text-[11px] text-muted-foreground"
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.03] py-1.5 text-[12px] font-semibold text-white/85"
                 >
                   {q}
                 </button>
@@ -448,7 +448,7 @@ const AviatorGame = () => {
 
       {/* Live bets */}
       <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-3">
-        <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+        <div className="mb-3 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.18em] text-white/75">
           <span>Player</span>
           <span>Bet</span>
           <span>Cash out</span>
@@ -457,9 +457,9 @@ const AviatorGame = () => {
           {players.map((p, i) => (
             <div
               key={`${p.name}-${i}`}
-              className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-[12px]"
+              className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-[12.5px]"
             >
-              <span className="w-1/3 text-muted-foreground">{p.name}</span>
+              <span className="w-1/3 text-white/75">{p.name}</span>
               <span className="w-1/3 text-center tabular-nums text-foreground">{fmt(p.bet)}</span>
               <span className={`w-1/3 text-right tabular-nums ${p.out ? "text-primary" : "text-muted-foreground"}`}>
                 {p.out ? `${p.out.toFixed(2)}x` : "—"}

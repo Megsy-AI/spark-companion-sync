@@ -45,7 +45,7 @@
     --secondary: 160 12% 16%;
     --secondary-foreground: 0 0% 100%;
     --muted: 160 10% 18%;
-    --muted-foreground: 160 8% 72%;
+    --muted-foreground: 160 10% 84%;
     --accent: 338 85% 68%;
     --accent-foreground: 0 0% 100%;
     --action: 0 0% 100%;
@@ -232,7 +232,7 @@
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: hsl(var(--muted-foreground) / 0.85);
+    color: hsl(var(--muted-foreground));
   }
   .chip-reward {
     background: hsl(var(--primary) / 0.12);
@@ -567,7 +567,7 @@
 .mine-btn-letter {
   position: relative;
   display: inline-block;
-  color: hsl(var(--foreground) / 0.85);
+  color: hsl(var(--foreground));
   animation: mine-letter-anim 2s ease-in-out infinite;
 }
 @keyframes mine-letter-anim {
