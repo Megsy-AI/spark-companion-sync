@@ -4017,6 +4017,8 @@ export type Database = {
           created_at: string
           game_slug: string
           id: string
+          meta: Json
+          multiplier: number
           payout: number
           settled_at: string | null
           stake: number
@@ -4027,6 +4029,8 @@ export type Database = {
           created_at?: string
           game_slug: string
           id?: string
+          meta?: Json
+          multiplier?: number
           payout?: number
           settled_at?: string | null
           stake: number
@@ -4037,6 +4041,8 @@ export type Database = {
           created_at?: string
           game_slug?: string
           id?: string
+          meta?: Json
+          multiplier?: number
           payout?: number
           settled_at?: string | null
           stake?: number
@@ -12919,6 +12925,14 @@ export type Database = {
         Returns: Json
       }
       expire_prize_rewards: { Args: never; Returns: number }
+      game_crash_cashout: {
+        Args: { _at: number; _bet_id: string; _telegram_id: number }
+        Returns: Json
+      }
+      game_crash_start: {
+        Args: { _stake: number; _telegram_id: number }
+        Returns: Json
+      }
       game_create_own_profile: {
         Args: {
           _first_name: string
@@ -12952,6 +12966,15 @@ export type Database = {
       }
       game_place_bet_for_telegram: {
         Args: { _game_slug: string; _stake: number; _telegram_id: number }
+        Returns: Json
+      }
+      game_play_round: {
+        Args: {
+          _game_slug: string
+          _params?: Json
+          _stake: number
+          _telegram_id: number
+        }
         Returns: Json
       }
       game_profile_id: { Args: { _telegram_id: number }; Returns: string }
