@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import ServerArtwork from "@/components/ServerArtwork";
-import GemmyCollection from "@/components/GemmyCollection";
+import { useNftArt } from "@/hooks/use-nft-art";
 import { swr } from "@/lib/cache";
 import CachedImage from "@/components/CachedImage";
 import { payWithStars, starsForTon } from "@/lib/stars";
@@ -45,6 +45,7 @@ const ServersPage = () => {
   const [tonBusy, setTonBusy] = useState<string | null>(null);
   const [tonConnectUI] = useTonConnectUI();
   const walletAddress = useTonAddress();
+  const nftArt = useNftArt();
   const { discount, priceFor, refresh: refreshDiscount, requestSmartOffer, thinking: offerThinking } = usePaymentDiscount();
 
 
@@ -167,8 +168,6 @@ const ServersPage = () => {
 
       <DiscountBanner discount={discount} thinking={offerThinking} onSmartOffer={() => void handleSmartOffer("servers")} />
 
-      <GemmyCollection />
-
       {myNfts.length > 0 && (
         <div className="mb-6">
           <h2 className="paper-eyebrow mb-3">Your creations</h2>
@@ -199,7 +198,7 @@ const ServersPage = () => {
               >
                 <div className="flex gap-4">
                   <div className="w-24 shrink-0">
-                    <ServerArtwork name={server.name} imageUrl={server.image_url} rarity={server.rarity} />
+                    <ServerArtwork name={server.name} imageUrl={nftArt[i % (nftArt.length || 1)] || server.image_url} rarity={server.rarity} />
                   </div>
 
                   <div className="min-w-0 flex-1">

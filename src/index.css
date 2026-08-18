@@ -33,27 +33,27 @@
 @layer base {
   :root {
     /* White + mint green + soft pink — Nova light theme */
-    --background: 0 0% 100%;
-    --foreground: 160 22% 14%;
-    --card: 0 0% 100%;
-    --card-foreground: 160 22% 14%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 160 22% 14%;
+    --background: 160 16% 6%;
+    --foreground: 0 0% 100%;
+    --card: 160 14% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 160 14% 10%;
+    --popover-foreground: 0 0% 100%;
     --primary: 158 78% 40%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 164 80% 62%;
-    --secondary: 158 45% 96%;
-    --secondary-foreground: 160 22% 18%;
-    --muted: 160 20% 95%;
-    --muted-foreground: 160 10% 44%;
+    --secondary: 160 12% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 160 10% 18%;
+    --muted-foreground: 160 8% 72%;
     --accent: 338 85% 68%;
     --accent-foreground: 0 0% 100%;
-    --action: 0 0% 0%;
-    --action-foreground: 0 0% 100%;
+    --action: 0 0% 100%;
+    --action-foreground: 160 22% 10%;
     --destructive: 5 74% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 160 18% 90%;
-    --input: 160 18% 94%;
+    --border: 0 0% 100% / 0.14;
+    --input: 0 0% 100% / 0.12;
     --ring: 158 78% 40%;
     --radius: 1.5rem;
     --ton-blue: 216 100% 56%;
@@ -69,10 +69,10 @@
     --sidebar-ring: 158 78% 40%;
 
     /* Liquid glass material tokens */
-    --glass-tint: 0 0% 100%;
+    --glass-tint: 160 14% 10%;
     --glass-opacity: 0.7;
     --glass-blur: 22px;
-    --glass-border: 160 20% 88%;
+    --glass-border: 0 0% 100%;
     --shadow-glass: 0 10px 30px -14px rgba(16, 46, 38, 0.16), 0 2px 8px -2px rgba(16, 46, 38, 0.08);
     --shadow-float: 0 24px 60px -22px rgba(16, 46, 38, 0.22);
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
@@ -199,27 +199,29 @@
 
   /* ---- Warm paper cards (Tasks) ---- */
   .paper-surface {
-    background: hsl(40 33% 96% / 0.92);
+    background: hsl(160 14% 9% / 0.72);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     backdrop-filter: blur(18px) saturate(140%);
   }
   .paper-card {
-    background: hsl(var(--card));
-    border: 1px solid hsl(160 18% 88% / 0.9);
+    background: hsl(160 14% 11% / 0.66);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid hsl(0 0% 100% / 0.12);
     border-radius: 1.5rem;
-    box-shadow: 0 10px 26px -18px rgba(16, 46, 38, 0.35), 0 1px 2px rgba(16, 46, 38, 0.04);
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.06);
   }
   .paper-row {
-    background: hsl(var(--card) / 0.93);
+    background: hsl(160 14% 12% / 0.62);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    border: 1px solid hsl(160 18% 88% / 0.9);
+    border: 1px solid hsl(0 0% 100% / 0.12);
     border-radius: 1rem;
     transition: background 0.2s ease, transform 0.2s ease;
   }
   .paper-row:active {
     transform: scale(0.985);
-    background: hsl(var(--card));
+    background: hsl(160 14% 14% / 0.75);
   }
   .paper-eyebrow {
     font-size: 10px;
@@ -255,7 +257,7 @@
     align-items: center;
     justify-content: center;
     line-height: 1;
-    background: hsl(var(--muted));
+    background: hsl(0 0% 100% / 0.1);
     color: hsl(var(--foreground));
     border-radius: 9999px;
     transition: transform 0.2s ease, opacity 0.2s ease;
@@ -270,11 +272,11 @@
   /* ---- Black + mint hero ---- */
   .hero-dark {
     background-color: transparent;
-    color: hsl(160 22% 18%);
+    color: hsl(0 0% 100%);
   }
   .hero-title {
     font-family: 'ITC Garamond Narrow', 'Playfair Display', serif;
-    color: hsl(160 24% 12%);
+    color: hsl(0 0% 100%);
     font-weight: 300;
     letter-spacing: 0.2px;
     text-shadow: none;
@@ -284,11 +286,11 @@
     font-weight: 400;
     color: hsl(var(--primary)); text-shadow: none;
   }
-  .hero-fg { color: hsl(160 24% 14%); }
-  .hero-dim { color: hsl(160 10% 44%); }
+  .hero-fg { color: hsl(0 0% 100%); }
+  .hero-dim { color: hsl(0 0% 100% / 0.66); }
 
   .liquid-glass {
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(18, 26, 24, 0.62);
     -webkit-backdrop-filter: blur(12px) saturate(1.3);
     backdrop-filter: blur(12px) saturate(1.3);
     border: none;
@@ -312,19 +314,19 @@
     pointer-events: none;
   }
   .liquid-glass-solid {
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(18, 26, 24, 0.78);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     backdrop-filter: blur(18px) saturate(140%);
   }
 
   /* ---- Nova editorial UI kit (merged design language) ---- */
   .nv-card {
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(18, 26, 24, 0.6);
     border-radius: 24px;
-    border: 1px solid rgba(16, 46, 38, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     -webkit-backdrop-filter: blur(14px) saturate(1.3);
     backdrop-filter: blur(14px) saturate(1.3);
-    box-shadow: var(--shadow-glass), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow: 0 20px 44px -26px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
   .nv-card-flat-bottom { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
   .nv-pill {
@@ -355,24 +357,24 @@
     justify-content: center;
     width: 58px; height: 44px;
     border-radius: 22px;
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(18, 26, 24, 0.62);
     -webkit-backdrop-filter: blur(6px) saturate(1.3);
     backdrop-filter: blur(6px) saturate(1.3);
-    box-shadow: var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.9);
-    color: hsl(160 24% 16%);
+    box-shadow: 0 12px 30px -18px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.08);
+    color: hsl(0 0% 100%);
   }
   .nv-eyebrow {
     font-family: 'Inter', sans-serif;
     font-size: 10px;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: hsl(160 10% 48%);
+    color: hsl(0 0% 100% / 0.6);
   }
-  .nv-stat-num { font-size: 25px; font-weight: 500; color: hsl(160 24% 14%); }
-  .nv-stat-label { font-size: 13px; color: hsl(160 10% 48%); }
+  .nv-stat-num { font-size: 25px; font-weight: 500; color: hsl(0 0% 100%); }
+  .nv-stat-label { font-size: 13px; color: hsl(0 0% 100% / 0.6); }
   .nv-divider {
     height: 1px;
-    background: linear-gradient(to right, hsl(160 18% 86%) 0%, hsl(160 18% 86%) 70%, transparent 100%);
+    background: linear-gradient(to right, hsl(0 0% 100% / 0.18) 0%, hsl(0 0% 100% / 0.18) 70%, transparent 100%);
     transform-origin: left;
     animation: zeLine 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
@@ -380,11 +382,11 @@
     display: inline-flex;
     padding: 5px 8px;
     border-radius: 11px;
-    background: hsl(160 40% 94%);
+    background: hsl(0 0% 100% / 0.1);
     font-size: 10.5px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    color: hsl(160 24% 26%);
+    color: hsl(0 0% 100% / 0.86);
   }
 
   /* entrance animations */
