@@ -325,11 +325,15 @@ const WalletPage = () => {
         )}
         {balances.map((b) => (
           <div key={b.symbol} className="flex items-center gap-3 px-4 py-3.5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-card">
-              {b.icon
-                ? <img src={b.icon} alt={b.symbol} className="h-6 w-6 rounded-full" loading="lazy" />
-                : <img src={NOVA_ICON} alt="NOVA" className="h-full w-full object-cover" loading="lazy" />}
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-card">
+              <img
+                src={b.icon || NOVA_ICON}
+                alt={b.symbol}
+                className="h-full w-full rounded-full object-cover"
+                loading="lazy"
+              />
             </span>
+
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
               <p className="text-[11px] text-muted-foreground">Available</p>
