@@ -194,34 +194,37 @@ const ServersPage = () => {
             {servers.map((server, i) => (
               <motion.div
                 key={server.id}
-                className="paper-card overflow-hidden p-4"
+                className="paper-card overflow-hidden p-0"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: Math.min(i, 8) * 0.04 }}
               >
-                <div className="flex gap-4">
-                  <div className="w-24 shrink-0">
-                    <ServerArtwork name={server.name} imageUrl={nftArt[i % (nftArt.length || 1)] || server.image_url} rarity={server.rarity} />
-                  </div>
+                <img
+                  src={nftArt[i % (nftArt.length || 1)] || server.image_url}
+                  alt={`${server.name} NFT`}
+                  className="block aspect-square w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
 
-                  <div className="min-w-0 flex-1">
-                    <p className="paper-eyebrow">{server.rarity}</p>
-                    <h3 className="font-display text-xl leading-none text-foreground">{server.name}</h3>
+                <div className="px-4 pt-3">
+                  <p className="paper-eyebrow">{server.rarity}</p>
+                  <h3 className="font-display text-xl leading-none text-foreground">{server.name}</h3>
 
-                    <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground">
-                      <span>Mining +{server.mining_boost || 0}%</span>
-                      <span>Attack +{server.attack_boost || 0}%</span>
-                      <span className="flex items-center gap-1">
-                        <img src={TON_ICON} alt="Gram" className="h-3 w-3 rounded-full" loading="lazy" decoding="async" />
-                        +{server.ton_mining_rate || 0}/d
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <img src={USDT_ICON} alt="USDT" className="h-3 w-3" loading="lazy" decoding="async" />
-                        +{server.usdt_mining_rate || 0}/d
-                      </span>
-                    </div>
+                  <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground">
+                    <span>Mining +{server.mining_boost || 0}%</span>
+                    <span>Attack +{server.attack_boost || 0}%</span>
+                    <span className="flex items-center gap-1">
+                      <img src={TON_ICON} alt="Gram" className="h-3 w-3 rounded-full" loading="lazy" decoding="async" />
+                      +{server.ton_mining_rate || 0}/d
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <img src={USDT_ICON} alt="USDT" className="h-3 w-3" loading="lazy" decoding="async" />
+                      +{server.usdt_mining_rate || 0}/d
+                    </span>
                   </div>
                 </div>
+
 
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <button
