@@ -21,7 +21,7 @@ const BetBar = ({ stake, onStake, balance, busy, label = "Play", onPlay, disable
 
     <div className="flex items-center gap-2">
       <div className="flex h-12 flex-1 items-center gap-2 rounded-2xl border border-white/12 bg-white/[0.06] px-4">
-        <img src="/images/gram-icon.png" alt="" className="h-5 w-5 rounded-full object-cover" />
+        <img src="/images/ton-icon.jpg" alt="" className="h-5 w-5 rounded-full object-cover" />
         <input
           value={stake}
           onChange={(e) => onStake(e.target.value.replace(/[^0-9.]/g, ""))}

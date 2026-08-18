@@ -40,7 +40,7 @@ const GamesPage = () => {
           <div className="paper-row mb-6 flex items-center justify-between px-4 py-3">
             <span className="text-[11px] uppercase tracking-widest text-muted-foreground">Your balance</span>
             <span className="flex items-center gap-2 font-display text-[16px] text-foreground">
-              <img src="/images/gram-icon.png" alt="" className="h-5 w-5 rounded-full object-cover" />
+              <img src="/images/ton-icon.jpg" alt="" className="h-5 w-5 rounded-full object-cover" />
               {fmt(balance)} Gram
             </span>
           </div>
