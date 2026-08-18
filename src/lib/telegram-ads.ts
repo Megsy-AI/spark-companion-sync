@@ -1,34 +1,66 @@
-// Ads helper: RichAds first, Adsgram as automatic fallback.
-// RichAds SDK + Adsgram SDK are loaded in index.html.
+// Ads helper: rewarded video only, loaded and shown on demand.
+// No SDK is loaded until the user explicitly taps "Watch Ad", so no automatic
+// banners, push ads or interstitials can appear anywhere in the app.
 
-const AD_METHODS = [
-  "triggerRewardedVideo",
-  "triggerRewardedInterstitial",
-  "triggerInterstitialVideo",
-  "triggerInterstitialBanner",
-  "triggerPushStyleAd",
-  "triggerPush",
-] as const;
+// Rewarded video formats only (no push / banner / auto formats).
+const AD_METHODS = ["triggerRewardedVideo", "triggerRewardedInterstitial"] as const;
 
-// Adsgram block id (set VITE_ADSGRAM_BLOCK_ID in env, or window.ADSGRAM_BLOCK_ID).
+const RICHADS_SDK = "https://richinfo.co/richpartners/telegram/js/tg-ob.js";
+const ADSGRAM_SDK = "https://sad.adsgram.ai/js/sad.min.js";
+
 const ADSGRAM_BLOCK_ID =
   (import.meta.env.VITE_ADSGRAM_BLOCK_ID as string | undefined) ||
   ((window as any).ADSGRAM_BLOCK_ID as string | undefined) ||
   "";
 
-export const isRichAdsReady = () => {
-  const controller = (window as any).TelegramAdsController;
-  if (!controller) return false;
-  return AD_METHODS.some((m) => typeof controller[m] === "function");
+const scriptCache = new Map<string, Promise<boolean>>();
+
+const loadScript = (src: string): Promise<boolean> => {
+  const cached = scriptCache.get(src);
+  if (cached) return cached;
+
+  const promise = new Promise<boolean>((resolve) => {
+    try {
+      const el = document.createElement("script");
+      el.src = src;
+      el.async = true;
+      el.onload = () => resolve(true);
+      el.onerror = () => resolve(false);
+      document.head.appendChild(el);
+    } catch {
+      resolve(false);
+    }
+  });
+
+  scriptCache.set(src, promise);
+  return promise;
 };
 
-export const isAdsgramReady = () =>
-  typeof (window as any).Adsgram?.init === "function" && !!ADSGRAM_BLOCK_ID;
+export const isAdsReady = () => true;
 
-export const isAdsReady = () => isRichAdsReady() || isAdsgramReady();
+let richController: any = null;
+
+const getRichController = async () => {
+  if (richController) return richController;
+  const loaded = await loadScript(RICHADS_SDK);
+  if (!loaded) return null;
+  const Ctor = (window as any).TelegramAdsController;
+  if (typeof Ctor !== "function") return null;
+  try {
+    const controller = new Ctor();
+    controller.initialize({
+      pubId: (window as any).RICHADS_PUB_ID ?? "998796",
+      appId: (window as any).RICHADS_APP_ID ?? "8586",
+    });
+    richController = controller;
+  } catch {
+    richController = null;
+  }
+  return richController;
+};
 
 const showRichAd = async (): Promise<boolean> => {
-  const controller = (window as any).TelegramAdsController;
+  const controller = await getRichController();
   if (!controller) return false;
   for (const method of AD_METHODS) {
     if (typeof controller[method] !== "function") continue;
@@ -36,27 +68,30 @@ const showRichAd = async (): Promise<boolean> => {
       await controller[method]();
       return true;
     } catch {
-      // try the next available ad format
+      // try the next rewarded format
     }
   }
   return false;
 };
 
 let adsgramController: any = null;
-const getAdsgram = () => {
-  if (!isAdsgramReady()) return null;
-  if (!adsgramController) {
-    try {
-      adsgramController = (window as any).Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-    } catch {
-      adsgramController = null;
-    }
+
+const getAdsgram = async () => {
+  if (!ADSGRAM_BLOCK_ID) return null;
+  if (adsgramController) return adsgramController;
+  const loaded = await loadScript(ADSGRAM_SDK);
+  if (!loaded) return null;
+  if (typeof (window as any).Adsgram?.init !== "function") return null;
+  try {
+    adsgramController = (window as any).Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+  } catch {
+    adsgramController = null;
   }
   return adsgramController;
 };
 
 const showAdsgramAd = async (): Promise<boolean> => {
-  const controller = getAdsgram();
+  const controller = await getAdsgram();
   if (!controller) return false;
   try {
     const res = await controller.show();
@@ -68,9 +103,8 @@ const showAdsgramAd = async (): Promise<boolean> => {
 };
 
 /**
- * Shows one ad with mutual fallback: the two networks back each other up.
- * Sources are alternated so load is shared, and if the first one has no ad
- * the other one is tried immediately.
+ * Shows exactly one rewarded video, only when called from a user action.
+ * Sources alternate so load is shared; if one has no ad the other is tried.
  */
 let lastSource: "rich" | "adsgram" = "adsgram";
 
