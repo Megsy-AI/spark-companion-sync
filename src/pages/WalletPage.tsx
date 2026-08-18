@@ -110,8 +110,7 @@ const WalletPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <p className="paper-eyebrow">Step 1 of 1</p>
-          <h1 className="mt-1 font-display text-3xl leading-none text-foreground">Connect your wallet</h1>
+          <h1 className="font-display text-3xl leading-none text-foreground">Connect your wallet</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Link a TON wallet to deposit Gram, withdraw rewards and buy servers straight from your balance.
           </p>
@@ -134,9 +133,7 @@ const WalletPage = () => {
           <button type="button" onClick={handleConnectWallet} className="btn-ink mt-6 h-12 w-full text-xs font-semibold uppercase tracking-widest">
             Connect TON Wallet
           </button>
-          <p className="mt-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            Tonkeeper · MyTonWallet · Telegram Wallet
-          </p>
+
         </motion.div>
         </div>
         </SpotlightHero>
