@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 import { crashCashout, crashStart, errorText, fmt } from "@/lib/casino";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
+import { PaymentError, sendTonPayment } from "@/lib/ton";
+import { verifyTonOnChain } from "@/lib/game-api";
+
 
 /** Multiplier curve — must match the server-side validation (1.07^seconds). */
 const curve = (seconds: number) => Math.pow(1.07, seconds);
