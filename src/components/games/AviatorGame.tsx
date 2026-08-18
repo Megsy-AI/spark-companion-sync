@@ -431,16 +431,17 @@ const AviatorGame = () => {
           ) : (
             <button
               type="button"
-              onClick={placeBet}
-              disabled={queued !== null || phase !== "betting"}
+              onClick={() => void placeBet()}
+              disabled={queued !== null || phase !== "betting" || topping}
               className="flex h-[74px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
               style={{ background: "linear-gradient(180deg, hsl(var(--aviator-glow)), hsl(var(--aviator)))" }}
             >
               <span className="text-[11px] uppercase tracking-[0.2em] opacity-90">
-                {queued !== null ? "Waiting" : "Bet"}
+                {topping ? "Top up" : queued !== null ? "Waiting" : stake > balance ? "Add Gram" : "Bet"}
               </span>
               <span className="font-display text-[20px] tabular-nums">{stake.toFixed(2)}</span>
             </button>
+
           )}
         </div>
       </div>
