@@ -203,9 +203,20 @@ const TasksPage = () => {
                                 : "Tap to open"}
                             </p>
                           </div>
-                          <span className="shrink-0 text-xs font-bold text-primary">
-                            +{task.reward_amount} {label}
-                          </span>
+                          <div className="flex shrink-0 items-center gap-2">
+                            <span className="text-xs font-bold text-primary">
+                              +{task.reward_amount} {label}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); void handleTask(task); }}
+                              disabled={claiming === task.id}
+                              className="btn-ink h-8 px-4 text-[11px] font-semibold tracking-wide"
+                            >
+                              {claiming === task.id ? "..." : "Go"}
+                            </button>
+                          </div>
+
                         </div>
                         {claiming === task.id && (
                           <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
