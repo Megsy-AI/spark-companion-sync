@@ -205,7 +205,7 @@ const GamesPage = () => {
       </SpotlightHero>
 
       {active && (
-        <div className="fixed inset-x-0 top-0 bottom-[78px] z-40 flex flex-col bg-black">
+        <div className="fixed inset-x-0 top-0 bottom-[calc(82px+env(safe-area-inset-bottom,0px))] z-[60] flex flex-col bg-background">
           <div className="flex items-center justify-between px-4 py-3">
             <div>
               <p className="font-display text-[15px] text-white">{active.name}</p>
