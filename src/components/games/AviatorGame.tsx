@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, Plus } from "lucide-react";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 import { crashCashout, crashStart, errorText, fmt } from "@/lib/casino";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
+import { PaymentError, sendTonPayment } from "@/lib/ton";
+import { verifyTonOnChain } from "@/lib/game-api";
+
 
 /** Multiplier curve — must match the server-side validation (1.07^seconds). */
 const curve = (seconds: number) => Math.pow(1.07, seconds);
@@ -43,9 +47,12 @@ const NAMES = ["a***i", "m***o", "s***a", "k***l", "n***r", "d***z", "y***i", "o
 const AviatorGame = () => {
   const { user, refreshProfile } = useApp();
   const { toast } = useToast();
+  const [tonConnectUI] = useTonConnectUI();
   const balance = Number(user.tonBalance || 0);
 
+  const [topping, setTopping] = useState(false);
   const [stake, setStake] = useState(0.5);
+
   const [phase, setPhase] = useState<Phase>("betting");
   const [countdown, setCountdown] = useState(BETTING_MS);
   const [queued, setQueued] = useState<number | null>(null);
@@ -169,15 +176,48 @@ const AviatorGame = () => {
     setPhase("flying");
   };
 
-  const placeBet = () => {
+  /** Not enough Gram? Open a TON top-up for the shortfall instead of blocking the bet. */
+  const topUp = async (amountTon: number) => {
+    setTopping(true);
+    try {
+      setResult(`Opening a ${fmt(amountTon)} Gram top-up…`);
+      const tx = await sendTonPayment(tonConnectUI, {
+        amountTon,
+        telegramId: user.telegramUser.id,
+        action: "deposit",
+        metadata: { source: "aviator" },
+      });
+      const verification = await verifyTonOnChain(tx.intentId, tx.boc, tonConnectUI.account?.address);
+      await refreshProfile();
+      if (!verification.verified) {
+        setResult("Top-up sent — it will be credited shortly.");
+        return false;
+      }
+      setResult(`Topped up ${fmt(tx.amountTon)} Gram`);
+      return true;
+    } catch (err) {
+      const msg = err instanceof PaymentError ? err.message : "Top-up failed. Please try again.";
+      toast({ title: "Top-up", description: msg, variant: "destructive" });
+      setResult(null);
+      return false;
+    } finally {
+      setTopping(false);
+    }
+  };
+
+  const placeBet = async () => {
     if (!Number.isFinite(stake) || stake <= 0) return;
     if (stake > balance) {
-      toast({ title: "Bet failed", description: errorText("insufficient_funds"), variant: "destructive" });
+      const shortfall = Math.max(0.1, Math.ceil((stake - balance) * 100) / 100);
+      const ok = await topUp(shortfall);
+      if (!ok) return;
+      setQueued(stake);
       return;
     }
     setResult(null);
     setQueued(stake);
   };
+
 
   const cashout = async () => {
     if (!betId) return;
@@ -205,11 +245,11 @@ const AviatorGame = () => {
   const step = (d: number) => setStake((s) => Math.max(0.1, Number((s + d).toFixed(2))));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       {/* Recent rounds */}
-      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {history.map((h, i) => (
-          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
+          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${chipTone(h)}`}>
             {h.toFixed(2)}x
           </span>
         ))}
@@ -217,7 +257,8 @@ const AviatorGame = () => {
 
       {/* Space */}
       <div
-        className="relative h-[520px] overflow-hidden rounded-[32px] border border-white/[0.08]"
+        className="relative h-[34dvh] max-h-[300px] min-h-[210px] overflow-hidden rounded-[26px] border border-white/[0.08]"
+
         style={{
           background:
             "radial-gradient(120% 100% at 50% 0%, rgba(60,180,220,0.10), transparent 60%), linear-gradient(180deg, hsl(var(--aviator-sky)) 0%, #05070f 100%)",
@@ -297,8 +338,8 @@ const AviatorGame = () => {
             {phase === "betting" ? (
               <motion.div key="wait" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 <p className="text-[10px] uppercase tracking-[0.38em] text-muted-foreground">Next round in</p>
-                <p className="mt-2 font-display text-[56px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
-                <div className="mx-auto mt-5 h-[3px] w-40 overflow-hidden rounded-full bg-white/10">
+                <p className="mt-2 font-display text-[40px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
+                <div className="mx-auto mt-3 h-[3px] w-32 overflow-hidden rounded-full bg-white/10">
                   <div
                     className="h-full rounded-full transition-[width] duration-75"
                     style={{ width: `${(countdown / BETTING_MS) * 100}%`, background: "hsl(var(--aviator))" }}
@@ -308,7 +349,7 @@ const AviatorGame = () => {
             ) : (
               <motion.div key="mult" initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
                 <p
-                  className="font-display text-[68px] leading-none tabular-nums"
+                  className="font-display text-[46px] leading-none tabular-nums"
                   style={{
                     color: phase === "crashed" ? "hsl(var(--aviator-glow))" : "hsl(0 0% 100%)",
                     textShadow: "0 0 40px hsl(var(--aviator) / 0.4)",
@@ -340,7 +381,7 @@ const AviatorGame = () => {
       {result && <p className="text-center text-[12px] text-muted-foreground">{result}</p>}
 
       {/* Bet panel */}
-      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-3">
+      <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-2.5">
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <div className="flex h-12 items-center justify-between rounded-2xl border border-white/[0.10] bg-black/30 px-2">
@@ -381,7 +422,7 @@ const AviatorGame = () => {
               type="button"
               onClick={() => void cashout()}
               disabled={busy}
-              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-primary-foreground disabled:opacity-60"
+              className="flex h-[74px] w-[42%] flex-col items-center justify-center rounded-2xl text-primary-foreground disabled:opacity-60"
               style={{ background: "linear-gradient(180deg, hsl(var(--primary)), hsl(158 78% 30%))" }}
             >
               <span className="text-[11px] uppercase tracking-[0.2em] opacity-80">Cash out</span>
@@ -390,22 +431,23 @@ const AviatorGame = () => {
           ) : (
             <button
               type="button"
-              onClick={placeBet}
-              disabled={queued !== null || phase !== "betting"}
-              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
+              onClick={() => void placeBet()}
+              disabled={queued !== null || phase !== "betting" || topping}
+              className="flex h-[74px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
               style={{ background: "linear-gradient(180deg, hsl(var(--aviator-glow)), hsl(var(--aviator)))" }}
             >
               <span className="text-[11px] uppercase tracking-[0.2em] opacity-90">
-                {queued !== null ? "Waiting" : "Bet"}
+                {topping ? "Top up" : queued !== null ? "Waiting" : stake > balance ? "Add Gram" : "Bet"}
               </span>
               <span className="font-display text-[20px] tabular-nums">{stake.toFixed(2)}</span>
             </button>
+
           )}
         </div>
       </div>
 
       {/* Live bets */}
-      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-4">
+      <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-3">
         <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
           <span>Player</span>
           <span>Bet</span>
