@@ -4012,6 +4012,39 @@ export type Database = {
         }
         Relationships: []
       }
+      game_bets: {
+        Row: {
+          created_at: string
+          game_slug: string
+          id: string
+          payout: number
+          settled_at: string | null
+          stake: number
+          status: string
+          telegram_id: number
+        }
+        Insert: {
+          created_at?: string
+          game_slug: string
+          id?: string
+          payout?: number
+          settled_at?: string | null
+          stake: number
+          status?: string
+          telegram_id: number
+        }
+        Update: {
+          created_at?: string
+          game_slug?: string
+          id?: string
+          payout?: number
+          settled_at?: string | null
+          stake?: number
+          status?: string
+          telegram_id?: number
+        }
+        Relationships: []
+      }
       game_notifications: {
         Row: {
           created_at: string
@@ -12917,6 +12950,10 @@ export type Database = {
         Args: { _telegram_id: number }
         Returns: boolean
       }
+      game_place_bet_for_telegram: {
+        Args: { _game_slug: string; _stake: number; _telegram_id: number }
+        Returns: Json
+      }
       game_profile_id: { Args: { _telegram_id: number }; Returns: string }
       game_public_profiles: {
         Args: { _ids: string[] }
@@ -12926,6 +12963,10 @@ export type Database = {
           photo_url: string
           username: string
         }[]
+      }
+      game_settle_bet_for_telegram: {
+        Args: { _bet_id: string; _telegram_id: number; _won: boolean }
+        Returns: Json
       }
       get_battle_inventory_for_telegram: {
         Args: { _telegram_id: number }
