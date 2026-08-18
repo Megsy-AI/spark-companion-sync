@@ -17,7 +17,7 @@ import {
   ServersPage,
   WalletPage,
   StakingPage,
-  AiPage,
+  GamesPage,
   AdminPage,
   AttackShopPage,
   NotFound,
@@ -103,7 +103,8 @@ const AnimatedRoutes = () => {
       <Route path="/wallet" element={<WalletPage />} />
       <Route path="/101" element={<AdminPage />} />
       <Route path="/staking" element={<StakingPage />} />
-      <Route path="/ai" element={<AiPage />} />
+      <Route path="/ai" element={<GamesPage />} />
+      <Route path="/games" element={<GamesPage />} />
       <Route path="/attack-shop" element={<AttackShopPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
