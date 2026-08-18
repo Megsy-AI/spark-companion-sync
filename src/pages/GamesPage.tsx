@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import SpotlightHero from "@/components/hero/SpotlightHero";
@@ -9,46 +9,52 @@ import { gameArt } from "@/lib/game-art";
 
 const TON_ICON = "/images/gram-icon.png";
 
-/** Open-source HTML5 games hosted on pages that allow embedding. */
+/** Playable, embeddable games: Pragmatic Play demo slots + verified HTML5 classics. */
 interface Game {
   slug: string;
   name: string;
   tagline: string;
   url: string;
-  category: "Casino" | "Arcade" | "Puzzle" | "Board";
+  cover?: string;
+  category: "Slots" | "Arcade" | "Puzzle";
   /** Seconds the player must survive in the round to win the wager. */
   challenge: number;
 }
 
+const ppUrl = (symbol: string) =>
+  `https://demogamesfree.pragmaticplay.net/gs2c/openGame.do?gameSymbol=${symbol}` +
+  `&websiteUrl=https%3A%2F%2Fdemogamesfree.pragmaticplay.net&jurisdictionID=99` +
+  `&lobbyUrl=https%3A%2F%2Fwww.pragmaticplay.com&lang=en&cur=USD&stylename=mrsl_pragmaticexternal`;
+
+const ppCover = (symbol: string) => `https://common-static.ppgames.net/game_pic/rec/325/${symbol}.png`;
+
+const pp = (symbol: string, slug: string, name: string, tagline: string): Game => ({
+  slug,
+  name,
+  tagline,
+  url: ppUrl(symbol),
+  cover: ppCover(symbol),
+  category: "Slots",
+  challenge: 60,
+});
+
 const GAMES: Game[] = [
-  {
-    slug: "slot-machine",
-    name: "Lucky Slots",
-    tagline: "Spin the reels",
-    url: "https://slotmachinescript.com/demo/",
-    category: "Casino",
-    challenge: 45,
-  },
-  {
-    slug: "blackjack",
-    name: "Blackjack 21",
-    tagline: "Beat the dealer",
-    url: "https://kevinnadar22.github.io/Blackjack/",
-    category: "Casino",
-    challenge: 60,
-  },
-  {
-    slug: "roulette",
-    name: "Roulette",
-    tagline: "Red, black or zero",
-    url: "https://mfetiu.github.io/roulette/",
-    category: "Casino",
-    challenge: 45,
-  },
+  pp("vs20fruitsw", "sweet-bonanza", "Sweet Bonanza", "Candy tumbles"),
+  pp("vs20olympgate", "gates-of-olympus", "Gates of Olympus", "Zeus multipliers"),
+  pp("vs10bbbonanza", "big-bass-bonanza", "Big Bass Bonanza", "Reel in the cash"),
+  pp("vs20starlight", "starlight-princess", "Starlight Princess", "Cosmic wins"),
+  pp("vs20doghouse", "the-dog-house", "The Dog House", "Sticky wilds"),
+  pp("vs25wolfgold", "wolf-gold", "Wolf Gold", "Money respins"),
+  pp("vs20sugarrush", "sugar-rush", "Sugar Rush", "Cluster pays"),
+  pp("vs20fruitparty", "fruit-party", "Fruit Party", "Juicy clusters"),
+  pp("vs25gladiator", "gladiator", "Gladiator", "Arena bonus"),
+  pp("vs5joker", "joker-jewels", "Joker's Jewels", "Classic reels"),
+  pp("vs1600drago", "drago", "Drago", "Jewels of Fortune"),
+  pp("vs20bonzgold", "bonanza-gold", "Bonanza Gold", "Gold multipliers"),
   {
     slug: "hextris",
     name: "Hextris",
-    tagline: "Rotate and stack — fast reflexes",
+    tagline: "Rotate and stack",
     url: "https://hextris.github.io/hextris/",
     category: "Arcade",
     challenge: 60,
@@ -62,14 +68,6 @@ const GAMES: Game[] = [
     challenge: 45,
   },
   {
-    slug: "astray",
-    name: "Astray",
-    tagline: "3D marble maze runner",
-    url: "https://wwwtyro.github.io/Astray/",
-    category: "Arcade",
-    challenge: 90,
-  },
-  {
     slug: "pacman",
     name: "Pac-Man",
     tagline: "The classic chase",
@@ -78,10 +76,10 @@ const GAMES: Game[] = [
     challenge: 60,
   },
   {
-    slug: "tetris",
-    name: "Tetris",
-    tagline: "Stack the blocks",
-    url: "https://chvin.github.io/react-tetris/?lan=en",
+    slug: "astray",
+    name: "Astray",
+    tagline: "3D marble maze",
+    url: "https://wwwtyro.github.io/Astray/",
     category: "Arcade",
     challenge: 90,
   },
@@ -96,8 +94,16 @@ const GAMES: Game[] = [
   {
     slug: "2048",
     name: "2048",
-    tagline: "Slide the tiles, chase the number",
+    tagline: "Slide the tiles",
     url: "https://gabrielecirulli.github.io/2048/",
+    category: "Puzzle",
+    challenge: 90,
+  },
+  {
+    slug: "tetris",
+    name: "Tetris",
+    tagline: "Stack the blocks",
+    url: "https://chvin.github.io/react-tetris/?lan=en",
     category: "Puzzle",
     challenge: 90,
   },
@@ -109,25 +115,9 @@ const GAMES: Game[] = [
     category: "Puzzle",
     challenge: 120,
   },
-  {
-    slug: "gomoku",
-    name: "Gomoku",
-    tagline: "Five in a row",
-    url: "https://lihongxun945.github.io/gobang/",
-    category: "Board",
-    challenge: 90,
-  },
-  {
-    slug: "chess",
-    name: "Chess",
-    tagline: "Play the engine",
-    url: "https://chessboardjs.com/examples/5000",
-    category: "Board",
-    challenge: 120,
-  },
 ];
 
-const CATEGORIES = ["Casino", "Arcade", "Puzzle", "Board"] as const;
+const CATEGORIES = ["Slots", "Arcade", "Puzzle"] as const;
 
 const GamesPage = () => {
   const { user, refreshProfile } = useApp();
@@ -245,7 +235,10 @@ const GamesPage = () => {
                       transition={{ duration: 0.3, delay: Math.min(i, 6) * 0.04 }}
                     >
                       <img
-                        src={gameArt(game.slug, game.name)}
+                        src={game.cover ?? gameArt(game.slug, game.name)}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = gameArt(game.slug, game.name);
+                        }}
                         alt={game.name}
                         className="aspect-square w-full object-cover"
                         loading="lazy"
