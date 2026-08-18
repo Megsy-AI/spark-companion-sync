@@ -373,28 +373,49 @@ const WalletPage = () => {
         ))}
       </div>
 
-      {/* Connection footer */}
+      {/* Connection card */}
       <motion.div
-        className="rounded-2xl glass glass-panel p-4 flex items-center justify-between"
+        className="paper-card p-4"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Connected</p>
-          <p className="text-xs font-mono text-foreground truncate">
-            {address ? `${address.slice(0, 6)}...${address.slice(-6)}` : ""}
-          </p>
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
+            <ShieldCheck className="h-4 w-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="paper-eyebrow flex items-center gap-1.5">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Wallet connected
+            </p>
+            <p className="truncate font-mono text-xs text-foreground">
+              {address ? `${address.slice(0, 8)}…${address.slice(-6)}` : ""}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!address) return;
+              navigator.clipboard.writeText(address);
+              toast({ title: "Address copied" });
+            }}
+            className="btn-ink-soft h-9 w-9 shrink-0"
+            aria-label="Copy wallet address"
+          >
+            <Copy className="h-3.5 w-3.5" />
+          </button>
         </div>
-        <Button
+
+        <button
+          type="button"
           onClick={handleDisconnect}
-          variant="outline"
-          size="sm"
-          className="rounded-xl border-destructive/40 text-destructive hover:bg-destructive/10 gap-1.5"
+          className="btn-ink-soft mt-3 h-10 w-full gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-destructive"
         >
-          <Power className="w-3.5 h-3.5" /> Disconnect
-        </Button>
+          <Power className="h-3.5 w-3.5" /> Disconnect
+        </button>
       </motion.div>
+
 
       <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
         <DialogContent className="fixed bottom-auto left-1/2 right-auto top-1/2 w-[calc(100%-2rem)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[32px] border-0 bg-transparent p-0 shadow-none sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-2rem)] sm:max-w-[360px] sm:-translate-x-1/2 sm:-translate-y-1/2">
