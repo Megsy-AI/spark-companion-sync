@@ -5,6 +5,7 @@ import SpotlightHero from "@/components/hero/SpotlightHero";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { gameArt } from "@/lib/game-art";
 
 const TON_ICON = "/images/gram-icon.png";
 
