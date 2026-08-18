@@ -193,7 +193,7 @@ const TasksPage = () => {
                       <div className="p-4">
                         <div className="flex items-center gap-3.5">
                           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action">
-                            <Zap className="h-4.5 w-4.5 text-action-foreground" />
+                            <Zap className="h-4 w-4 text-action-foreground" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-foreground truncate">{task.title}</p>
