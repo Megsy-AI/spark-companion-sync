@@ -272,26 +272,55 @@ const AviatorGame = () => {
           />
         </svg>
 
-        {/* plane */}
+        {/* rocket */}
         <motion.div
           className="absolute"
           style={{ left: `${px}%`, bottom: `${py}%` }}
           animate={
             phase === "crashed"
-              ? { x: 260, y: -170, opacity: 0, rotate: 18 }
-              : { x: 0, y: flying ? [0, -5, 0] : 0, opacity: phase === "betting" ? 0.35 : 1, rotate: -14 }
+              ? { x: 260, y: -170, opacity: 0, rotate: -45 }
+              : { x: 0, y: flying ? [0, -4, 0] : 0, opacity: phase === "betting" ? 0.4 : 1, rotate: -45 }
           }
-          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 1.8, repeat: Infinity }}
+          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
         >
           <svg
-            viewBox="0 0 64 40"
-            className="h-10 w-16 drop-shadow-[0_0_14px_hsl(var(--aviator)/0.75)]"
+            viewBox="0 0 48 64"
+            className="h-14 w-11 drop-shadow-[0_0_16px_hsl(var(--aviator)/0.6)]"
             fill="none"
           >
-            <path d="M4 26 L44 20 L60 22 L44 26 L14 30 Z" fill="hsl(var(--aviator))" />
-            <path d="M20 20 L28 6 L34 6 L30 20 Z" fill="hsl(var(--aviator-glow))" />
-            <path d="M18 27 L24 36 L30 36 L28 27 Z" fill="hsl(var(--aviator)/0.75)" />
-            <circle cx="47" cy="22" r="2.4" fill="#fff" opacity="0.85" />
+            <defs>
+              <linearGradient id="av-hull" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="60%" stopColor="#dfe6f5" />
+                <stop offset="100%" stopColor="#9aa6c4" />
+              </linearGradient>
+              <linearGradient id="av-flame" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--aviator-glow))" />
+                <stop offset="100%" stopColor="hsl(var(--aviator) / 0)" />
+              </linearGradient>
+            </defs>
+            {/* thruster flame */}
+            <motion.path
+              d="M24 50 C28 55 27 60 24 64 C21 60 20 55 24 50 Z"
+              fill="url(#av-flame)"
+              animate={{ scaleY: flying ? [0.7, 1.15, 0.8] : 0.5, opacity: flying ? 1 : 0.4 }}
+              transition={{ duration: 0.45, repeat: Infinity, ease: "easeInOut" }}
+              style={{ transformOrigin: "24px 50px" }}
+            />
+            {/* fins */}
+            <path d="M16 34 C10 40 9 46 11 50 L16 45 Z" fill="hsl(var(--aviator))" />
+            <path d="M32 34 C38 40 39 46 37 50 L32 45 Z" fill="hsl(var(--aviator))" />
+            {/* hull */}
+            <path
+              d="M24 2 C33 12 37 24 37 36 C37 44 32 50 24 52 C16 50 11 44 11 36 C11 24 15 12 24 2 Z"
+              fill="url(#av-hull)"
+            />
+            {/* window */}
+            <circle cx="24" cy="24" r="6" fill="#0b1030" opacity="0.9" />
+            <circle cx="24" cy="24" r="6" fill="none" stroke="hsl(var(--aviator))" strokeWidth="1.6" />
+            <circle cx="21.6" cy="21.8" r="1.6" fill="#ffffff" opacity="0.6" />
+            {/* nose accent */}
+            <path d="M24 2 C27 7 29 12 30 17 C28 14 26 12 24 11 C22 12 20 14 18 17 C19 12 21 7 24 2 Z" fill="hsl(var(--aviator))" />
           </svg>
         </motion.div>
 
