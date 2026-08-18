@@ -234,7 +234,7 @@ export default function AiPage() {
     setBuying(true);
     try {
       const tx = await sendTonPayment(tonConnectUI, {
-        amountTon: proPrice,
+        amountTon: PLAN_PRICE_TON, // discount is applied server-side on the intent
         telegramId: user.telegramUser.id,
         action: "ai_pro",
       });
@@ -870,7 +870,7 @@ export default function AiPage() {
                     className="liquid-press flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-[hsl(0_0%_100%/0.72)] font-display text-[14px] font-medium text-foreground disabled:opacity-60"
                   >
                     <TelegramStar className="h-4 w-4" />
-                    Pay with {STARS_PRICES.ai_pro} Telegram Stars
+                    Pay with {Math.max(1, Math.round(STARS_PRICES.ai_pro * (1 - discount.discount_pct / 100)))} Telegram Stars
                   </button>
                 </div>
               )}

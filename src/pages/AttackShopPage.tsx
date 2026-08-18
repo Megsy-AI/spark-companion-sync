@@ -56,7 +56,7 @@ const AttackShopPage = () => {
 
     try {
       const transaction = await sendTonPayment(tonConnectUI, {
-        amountTon: priceFor(pkg.price),
+        amountTon: pkg.price, // discount is applied server-side on the intent
         telegramId: user.telegramUser.id,
         action: "battle_item",
         metadata: { category, packageKey },

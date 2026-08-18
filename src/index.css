@@ -727,15 +727,10 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: hsl(var(--background));
+  background: #000000;
   overflow: hidden;
 }
 
-.liquid-bg__veil {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(160deg, hsl(var(--primary) / 0.10), hsl(0 0% 100% / 0.35), hsl(var(--accent) / 0.12));
-}
 
 /* Keep every primary action consistently black with white text. */
 button.bg-primary,
