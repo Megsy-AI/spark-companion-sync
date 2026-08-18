@@ -22,13 +22,6 @@ interface Task {
   is_pinned: boolean;
 }
 
-const VERIFICATION_LABELS: Record<string, string> = {
-  referral_count: "Invite 3 friends to unlock",
-  mining_hours: "Complete 3 mining sessions",
-  server_purchase: "Buy your first server",
-  kill_monster: "Land a killing blow on a monster",
-};
-
 const REWARD_LABEL: Record<string, string> = {
   ton: "Gram",
   usdt: "USDT",
