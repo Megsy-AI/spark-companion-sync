@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Clock, Zap } from "lucide-react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import { PaymentError, sendTonPayment } from "@/lib/ton";
 import { verifyTonOnChain } from "@/lib/game-api";
 
-const TON_ICON = "/images/gram-icon.png";
 const BASE_PRICE = 0.5;
 
 type BoostKind = "time" | "yield";
@@ -73,50 +71,42 @@ const MiningBoosters = () => {
     }
   };
 
-  const cards: { kind: BoostKind; icon: typeof Clock; title: string; effect: string }[] = [
-    { kind: "time", icon: Clock, title: "Longer cycle", effect: `+${(levels.time + 1) * 2}h` },
-    { kind: "yield", icon: Zap, title: "Multiply rewards", effect: `x${(1 + (levels.yield + 1) * 0.5).toFixed(1)}` },
+  const rows: { kind: BoostKind; title: string; effect: string }[] = [
+    { kind: "time", title: "Longer cycle", effect: `+${(levels.time + 1) * 2}h` },
+    { kind: "yield", title: "Multiply rewards", effect: `x${(1 + (levels.yield + 1) * 0.5).toFixed(1)}` },
   ];
 
   return (
     <motion.div
-      className="nv-card mt-3 p-4"
-      initial={{ opacity: 0, y: 12 }}
+      className="mt-3 rounded-2xl border border-white/12 bg-white/[0.05] px-3.5 py-2.5 backdrop-blur-xl"
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.14, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay: 0.14, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      <p className="nv-eyebrow">Boosters</p>
-
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        {cards.map(({ kind, icon: Icon, title, effect }) => (
-          <div key={kind} className="rounded-2xl border border-white/12 bg-white/[0.06] p-3.5">
-            <div className="flex items-center gap-2">
-              <Icon className="h-4 w-4 shrink-0 text-white" strokeWidth={1.8} />
-              <p className="truncate text-[12px] font-medium text-white">{title}</p>
-            </div>
-            <p className="mt-1 font-display text-2xl leading-none text-white">{effect}</p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/55">
+      {rows.map(({ kind, title, effect }, i) => (
+        <div
+          key={kind}
+          className={`flex items-center gap-3 py-2 ${i > 0 ? "border-t border-white/10" : ""}`}
+        >
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[12px] font-medium text-foreground">
+              {title} <span className="text-muted-foreground">{effect}</span>
+            </p>
+            <p className="text-[10px] text-muted-foreground">
               {levels[kind] > 0 ? `Level ${levels[kind]}` : "Not active"}
             </p>
-
-            <button
-              type="button"
-              onClick={() => void buy(kind)}
-              disabled={busy === kind}
-              className="btn-ink mt-3 h-10 w-full gap-1.5 text-[11px] font-semibold uppercase tracking-widest"
-            >
-              {busy === kind ? (
-                <span className="animate-pulse">Paying…</span>
-              ) : (
-                <>
-                  <img src={TON_ICON} alt="" className="h-3.5 w-3.5 rounded-full" loading="lazy" decoding="async" />
-                  {priceForLevel(levels[kind])}
-                </>
-              )}
-            </button>
           </div>
-        ))}
-      </div>
+
+          <button
+            type="button"
+            onClick={() => void buy(kind)}
+            disabled={busy === kind}
+            className="h-8 shrink-0 rounded-full bg-white px-3.5 text-[11px] font-semibold text-black disabled:opacity-60"
+          >
+            {busy === kind ? "…" : `${priceForLevel(levels[kind])} TON`}
+          </button>
+        </div>
+      ))}
     </motion.div>
   );
 };
