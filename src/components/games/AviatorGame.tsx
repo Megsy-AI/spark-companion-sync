@@ -245,11 +245,11 @@ const AviatorGame = () => {
   const step = (d: number) => setStake((s) => Math.max(0.1, Number((s + d).toFixed(2))));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2.5">
       {/* Recent rounds */}
-      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-1.5 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {history.map((h, i) => (
-          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
+          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold ${chipTone(h)}`}>
             {h.toFixed(2)}x
           </span>
         ))}
@@ -257,7 +257,8 @@ const AviatorGame = () => {
 
       {/* Space */}
       <div
-        className="relative h-[520px] overflow-hidden rounded-[32px] border border-white/[0.08]"
+        className="relative h-[34dvh] max-h-[300px] min-h-[210px] overflow-hidden rounded-[26px] border border-white/[0.08]"
+
         style={{
           background:
             "radial-gradient(120% 100% at 50% 0%, rgba(60,180,220,0.10), transparent 60%), linear-gradient(180deg, hsl(var(--aviator-sky)) 0%, #05070f 100%)",
