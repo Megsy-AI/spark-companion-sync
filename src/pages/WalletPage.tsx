@@ -143,11 +143,39 @@ const WalletPage = () => {
   }
 
 
+  const gramPrice = markets["the-open-network"]?.price || TON_USD;
   const balances = [
-    { symbol: "$NOVA", balance: user.siriBalance, color: "text-primary", icon: null, usd: 0 },
-    { symbol: "Gram", balance: user.tonBalance, color: "text-ton-blue", icon: TON_ICON, usd: user.tonBalance * TON_USD },
-    { symbol: "USDT", balance: user.usdtBalance, color: "text-neon-green", icon: USDT_ICON, usd: user.usdtBalance },
+    { symbol: "$NOVA", balance: user.siriBalance, icon: NOVA_ICON, price: 0, usd: 0 },
+    {
+      symbol: "Gram",
+      balance: user.tonBalance,
+      icon: TON_ICON,
+      price: gramPrice,
+      usd: user.tonBalance * gramPrice,
+    },
+    {
+      symbol: "USDT",
+      balance: user.usdtBalance,
+      icon: USDT_ICON,
+      price: markets["tether"]?.price || 1,
+      usd: user.usdtBalance * (markets["tether"]?.price || 1),
+    },
+    {
+      symbol: "DOGS",
+      balance: 0,
+      icon: markets["dogs-2"]?.image || "",
+      price: markets["dogs-2"]?.price || 0,
+      usd: 0,
+    },
+    {
+      symbol: "NOT",
+      balance: 0,
+      icon: markets["notcoin"]?.image || "",
+      price: markets["notcoin"]?.price || 0,
+      usd: 0,
+    },
   ];
+
 
   const handleDisconnect = async () => {
     await tonConnectUI.disconnect();
