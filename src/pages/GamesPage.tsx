@@ -240,36 +240,45 @@ const GamesPage = () => {
             </p>
           </div>
 
-          <h2 className="paper-eyebrow mb-3">Game rooms</h2>
-          <div className="space-y-3">
-            {GAMES.map((game, i) => (
-              <motion.div
-                key={game.slug}
-                className="paper-row p-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: Math.min(i, 6) * 0.04 }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-display text-[16px] leading-tight text-foreground">{game.name}</p>
-                    <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
-                      {game.tagline} · survive {game.challenge}s
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => void play(game)}
-                    disabled={busy === game.slug}
-                    className="btn-ink h-10 shrink-0 gap-1.5 px-4 text-[11px] font-semibold uppercase tracking-widest"
-                  >
-                    <img src={TON_ICON} alt="" className="h-3.5 w-3.5 rounded-full" loading="lazy" decoding="async" />
-                    {busy === game.slug ? "…" : `Bet ${stake}`}
-                  </button>
+          {CATEGORIES.map((cat) => {
+            const list = GAMES.filter((g) => g.category === cat);
+            if (!list.length) return null;
+            return (
+              <div key={cat} className="mb-6">
+                <h2 className="paper-eyebrow mb-3">{cat}</h2>
+                <div className="space-y-3">
+                  {list.map((game, i) => (
+                    <motion.div
+                      key={game.slug}
+                      className="paper-row p-4"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: Math.min(i, 6) * 0.04 }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-display text-[16px] leading-tight text-foreground">{game.name}</p>
+                          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+                            {game.tagline} · survive {game.challenge}s
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => void play(game)}
+                          disabled={busy === game.slug}
+                          className="btn-ink h-10 shrink-0 gap-1.5 px-4 text-[11px] font-semibold uppercase tracking-widest"
+                        >
+                          <img src={TON_ICON} alt="" className="h-3.5 w-3.5 rounded-full" loading="lazy" decoding="async" />
+                          {busy === game.slug ? "…" : `Bet ${stake}`}
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            );
+          })}
+
 
           <p className="mt-4 text-center text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
             Games are third-party open-source titles played inside the app
