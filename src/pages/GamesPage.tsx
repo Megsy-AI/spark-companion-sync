@@ -235,7 +235,10 @@ const GamesPage = () => {
                       transition={{ duration: 0.3, delay: Math.min(i, 6) * 0.04 }}
                     >
                       <img
-                        src={gameArt(game.slug, game.name)}
+                        src={game.cover ?? gameArt(game.slug, game.name)}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = gameArt(game.slug, game.name);
+                        }}
                         alt={game.name}
                         className="aspect-square w-full object-cover"
                         loading="lazy"
