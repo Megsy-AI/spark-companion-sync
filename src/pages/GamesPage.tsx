@@ -14,16 +14,42 @@ interface Game {
   name: string;
   tagline: string;
   url: string;
+  category: "Casino" | "Arcade" | "Puzzle" | "Board";
   /** Seconds the player must survive in the round to win the wager. */
   challenge: number;
 }
 
 const GAMES: Game[] = [
   {
+    slug: "slot-machine",
+    name: "Lucky Slots",
+    tagline: "Spin the reels",
+    url: "https://slotmachinescript.com/demo/",
+    category: "Casino",
+    challenge: 45,
+  },
+  {
+    slug: "blackjack",
+    name: "Blackjack 21",
+    tagline: "Beat the dealer",
+    url: "https://kevinnadar22.github.io/Blackjack/",
+    category: "Casino",
+    challenge: 60,
+  },
+  {
+    slug: "roulette",
+    name: "Roulette",
+    tagline: "Red, black or zero",
+    url: "https://mfetiu.github.io/roulette/",
+    category: "Casino",
+    challenge: 45,
+  },
+  {
     slug: "hextris",
     name: "Hextris",
     tagline: "Rotate and stack — fast reflexes",
     url: "https://hextris.github.io/hextris/",
+    category: "Arcade",
     challenge: 60,
   },
   {
@@ -31,6 +57,7 @@ const GAMES: Game[] = [
     name: "Clumsy Bird",
     tagline: "One tap, endless nerves",
     url: "https://ellisonleao.github.io/clumsy-bird/",
+    category: "Arcade",
     challenge: 45,
   },
   {
@@ -38,6 +65,7 @@ const GAMES: Game[] = [
     name: "Astray",
     tagline: "3D marble maze runner",
     url: "https://wwwtyro.github.io/Astray/",
+    category: "Arcade",
     challenge: 90,
   },
   {
@@ -45,16 +73,61 @@ const GAMES: Game[] = [
     name: "Pac-Man",
     tagline: "The classic chase",
     url: "https://pacman.platzh1rsch.ch/",
+    category: "Arcade",
     challenge: 60,
+  },
+  {
+    slug: "tetris",
+    name: "Tetris",
+    tagline: "Stack the blocks",
+    url: "https://chvin.github.io/react-tetris/?lan=en",
+    category: "Arcade",
+    challenge: 90,
+  },
+  {
+    slug: "bananabread",
+    name: "Banana Bread",
+    tagline: "3D shooter arena",
+    url: "https://kripken.github.io/BananaBread/cube2/game.html",
+    category: "Arcade",
+    challenge: 120,
   },
   {
     slug: "2048",
     name: "2048",
     tagline: "Slide the tiles, chase the number",
-    url: "https://play2048.co/",
+    url: "https://gabrielecirulli.github.io/2048/",
+    category: "Puzzle",
     challenge: 90,
   },
+  {
+    slug: "untrusted",
+    name: "Untrusted",
+    tagline: "Hack your way out",
+    url: "https://alexnisnevich.github.io/untrusted/",
+    category: "Puzzle",
+    challenge: 120,
+  },
+  {
+    slug: "gomoku",
+    name: "Gomoku",
+    tagline: "Five in a row",
+    url: "https://lihongxun945.github.io/gobang/",
+    category: "Board",
+    challenge: 90,
+  },
+  {
+    slug: "chess",
+    name: "Chess",
+    tagline: "Play the engine",
+    url: "https://chessboardjs.com/examples/5000",
+    category: "Board",
+    challenge: 120,
+  },
 ];
+
+const CATEGORIES = ["Casino", "Arcade", "Puzzle", "Board"] as const;
+
 
 const STAKES = [0.5, 1, 2, 5];
 
