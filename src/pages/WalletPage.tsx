@@ -364,7 +364,9 @@ const WalletPage = () => {
 
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
-              <p className="text-[11px] text-muted-foreground">Available</p>
+              <p className="text-[11px] text-muted-foreground">
+                {b.price > 0 ? formatUsd(b.price) : "—"}
+              </p>
             </div>
             <div className="text-right">
               <p className="font-display text-base text-foreground">
@@ -379,6 +381,7 @@ const WalletPage = () => {
           </div>
         ))}
       </motion.div>
+
 
       {/* Connection */}
       <p className="paper-eyebrow mb-2 px-1">Wallet</p>
