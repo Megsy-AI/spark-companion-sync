@@ -461,6 +461,19 @@ serve(async (req) => {
         return new Response(JSON.stringify({ error: 'Unknown product' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
 
+      // Apply the player's tier discount to Stars purchases too. The percentage
+      // is always recomputed here so the client can never inflate it.
+      if (telegramId && (requested === 'server' || requested === 'ai_pro')) {
+        const { data: discountRow } = await supabase.rpc('get_payment_discount_for_telegram', {
+          _telegram_id: telegramId,
+        });
+        const pct = Math.min(Number((discountRow as Record<string, unknown> | null)?.discount_pct ?? 0) || 0, 50);
+        if (pct > 0) {
+          product = { ...product, stars: Math.max(1, Math.round(product.stars * (1 - pct / 100))) };
+        }
+      }
+
+
       const payload = `${product.id}:${crypto.randomUUID()}`;
       const { error: insErr } = await supabase.from('star_payments').insert({
         profile_id: profileId,
