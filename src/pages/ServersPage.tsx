@@ -161,97 +161,108 @@ const ServersPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dark pb-24">
+    <div className="min-h-screen pb-28">
       <SpotlightHero title="Servers">
-      <div className="px-4 pt-8">
+      <div className="px-5 pt-6">
 
       <DiscountBanner discount={discount} thinking={offerThinking} onSmartOffer={() => void handleSmartOffer("servers")} />
 
-      <div className="mb-4">
+      <div className="mb-5">
         <CreateNftButton onCreated={() => void loadMyNfts()} />
       </div>
 
       {myNfts.length > 0 && (
         <div className="mb-6">
-          <h2 className="mb-2 text-xs font-display uppercase tracking-widest text-muted-foreground">Your Creations</h2>
+          <h2 className="paper-eyebrow mb-3">Your creations</h2>
           <div className="grid grid-cols-2 gap-3">
             {myNfts.map((n) => (
-              <div key={n.id} className="glass rounded-2xl p-3">
+              <div key={n.id} className="paper-card p-3">
                 <CachedImage src={n.image_url} alt={n.name} className="mb-2 w-full rounded-xl object-cover" />
-                <p className="text-center text-xs font-display font-bold text-foreground">{n.name}</p>
+                <p className="text-center text-xs font-semibold text-foreground">{n.name}</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-
       {servers.length === 0 ? (
-        <div className="text-center text-muted-foreground py-8">No servers available</div>
+        <div className="py-10 text-center text-sm text-muted-foreground">No servers available</div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {servers.map((server, i) => (
-            <motion.div key={server.id} className="glass rounded-2xl p-3 flex flex-col"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <ServerArtwork name={server.name} imageUrl={server.image_url} rarity={server.rarity} className="my-3" />
-              <h3 className="text-xs font-display font-bold text-foreground text-center mb-2">{server.name}</h3>
-              <div className="space-y-1 mb-3 text-[10px]">
-                <div className="flex justify-between text-muted-foreground">
-                  <span>Mining +{server.mining_boost || 0}%</span>
-                  <span>Atk +{server.attack_boost || 0}%</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span className="text-ton-blue flex items-center gap-0.5">
-                    <img src={TON_ICON} alt="Gram" className="w-3 h-3 rounded-full"  loading="lazy" decoding="async" />
-                    +{server.ton_mining_rate || 0}/d
-                  </span>
-                  <span className="text-neon-green flex items-center gap-0.5">
-                    <img src={USDT_ICON} alt="USDT" className="w-3 h-3"  loading="lazy" decoding="async" />
-                    +{server.usdt_mining_rate || 0}/d
-                  </span>
-                </div>
-              </div>
-              <div className="mt-auto space-y-1.5">
-              <Button
-                size="sm"
-                variant="outline"
-                className="w-full rounded-xl font-display text-xs"
-                onClick={() => void handleBuyWithTon(server)}
-                disabled={tonBusy === server.id}
+        <>
+          <h2 className="paper-eyebrow mb-3">Mining servers</h2>
+          <div className="space-y-3">
+            {servers.map((server, i) => (
+              <motion.div
+                key={server.id}
+                className="paper-card overflow-hidden p-4"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: Math.min(i, 8) * 0.04 }}
               >
-                {tonBusy === server.id ? (
-                  <span className="animate-pulse">Processing…</span>
-                ) : (
-                  <span className="flex items-center gap-1">
-                    <img src={TON_ICON} alt="Gram" className="w-3 h-3 rounded-full" loading="lazy" decoding="async" />
-                    {discount.discount_pct > 0 && (
-                      <span className="line-through opacity-50">{Number(server.price_ton)}</span>
+                <div className="flex gap-4">
+                  <div className="w-24 shrink-0">
+                    <ServerArtwork name={server.name} imageUrl={server.image_url} rarity={server.rarity} />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <p className="paper-eyebrow">{server.rarity}</p>
+                    <h3 className="font-display text-xl leading-none text-foreground">{server.name}</h3>
+
+                    <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px] text-muted-foreground">
+                      <span>Mining +{server.mining_boost || 0}%</span>
+                      <span>Attack +{server.attack_boost || 0}%</span>
+                      <span className="flex items-center gap-1">
+                        <img src={TON_ICON} alt="Gram" className="h-3 w-3 rounded-full" loading="lazy" decoding="async" />
+                        +{server.ton_mining_rate || 0}/d
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <img src={USDT_ICON} alt="USDT" className="h-3 w-3" loading="lazy" decoding="async" />
+                        +{server.usdt_mining_rate || 0}/d
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    className="btn-ink h-11 text-xs font-semibold"
+                    onClick={() => void handleBuyWithTon(server)}
+                    disabled={tonBusy === server.id}
+                  >
+                    {tonBusy === server.id ? (
+                      <span className="animate-pulse">Processing…</span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <img src={TON_ICON} alt="" className="h-3.5 w-3.5 rounded-full" loading="lazy" decoding="async" />
+                        {discount.discount_pct > 0 && (
+                          <span className="line-through opacity-50">{Number(server.price_ton)}</span>
+                        )}
+                        {priceFor(Number(server.price_ton))} TON
+                      </span>
                     )}
-                    {priceFor(Number(server.price_ton))} TON
-                  </span>
-                )}
-              </Button>
-              <Button
-                size="sm"
-                className="w-full rounded-xl font-display text-xs glow-primary"
+                  </button>
 
-                onClick={() => void handleBuyWithStars(server)}
-                disabled={starBusy === server.id}
-              >
-                {starBusy === server.id ? (
-                  <span className="animate-pulse">Opening…</span>
-                ) : (
-                  <span className="flex items-center gap-1">
-                    <TelegramStar className="h-3 w-3" />
-                    {starsForTon(priceFor(Number(server.price_ton))).toLocaleString()} Stars
-                  </span>
-                )}
-              </Button>
-              </div>
-            </motion.div>
-
-          ))}
-        </div>
+                  <button
+                    type="button"
+                    className="btn-ink-soft h-11 text-xs font-semibold"
+                    onClick={() => void handleBuyWithStars(server)}
+                    disabled={starBusy === server.id}
+                  >
+                    {starBusy === server.id ? (
+                      <span className="animate-pulse">Opening…</span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <TelegramStar className="h-3.5 w-3.5" />
+                        {starsForTon(priceFor(Number(server.price_ton))).toLocaleString()}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </>
       )}
       </div>
       </SpotlightHero>
@@ -260,3 +271,4 @@ const ServersPage = () => {
 };
 
 export default ServersPage;
+
