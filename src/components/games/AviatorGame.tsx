@@ -18,6 +18,19 @@ const QUICK = [0.1, 0.5, 1, 5];
 /** Client-side visual bust point; the server always has the final word on payouts. */
 const randomBust = () => Math.min(25, Math.max(1.05, 0.96 / (1 - Math.random())));
 
+/** Static starfield (generated once so stars never jump between renders). */
+const STARS = Array.from({ length: 90 }, (_, i) => {
+  const r = (n: number) => (((Math.sin(i * 12.9898 + n * 78.233) * 43758.5453) % 1) + 1) % 1;
+  return {
+    x: r(1) * 100,
+    y: r(2) * 100,
+    size: 0.6 + r(3) * 1.7,
+    opacity: 0.25 + r(4) * 0.6,
+    delay: r(5) * 4,
+    dur: 2.4 + r(6) * 3.6,
+  };
+});
+
 const chipTone = (m: number) =>
   m >= 10
     ? "text-[hsl(var(--aviator-glow))] border-[hsl(var(--aviator)/0.5)] bg-[hsl(var(--aviator)/0.12)]"
@@ -202,25 +215,43 @@ const AviatorGame = () => {
         ))}
       </div>
 
-      {/* Sky */}
+      {/* Space */}
       <div
         className="relative h-[300px] overflow-hidden rounded-[28px] border border-white/10"
         style={{
           background:
-            "radial-gradient(130% 100% at 12% 100%, hsl(var(--aviator) / 0.30), transparent 62%), linear-gradient(180deg, hsl(var(--aviator-sky)), #04030a)",
+            "radial-gradient(120% 90% at 18% 8%, rgba(120,80,255,0.22), transparent 60%), radial-gradient(100% 80% at 88% 92%, hsl(var(--aviator) / 0.22), transparent 62%), linear-gradient(180deg, #070a1c 0%, #05061a 55%, #020209 100%)",
         }}
       >
-        {/* rotating rays */}
+        {/* starfield */}
+        <div className="absolute inset-0">
+          {STARS.map((s, i) => (
+            <motion.span
+              key={i}
+              className="absolute rounded-full bg-white"
+              style={{
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                width: s.size,
+                height: s.size,
+                boxShadow: s.size > 1.6 ? "0 0 6px rgba(255,255,255,0.8)" : undefined,
+              }}
+              animate={{ opacity: [s.opacity * 0.35, s.opacity, s.opacity * 0.35] }}
+              transition={{ duration: s.dur, delay: s.delay, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
+        </div>
+        {/* distant nebula drift */}
         <motion.div
-          className="absolute -inset-1/4 opacity-[0.07]"
+          className="pointer-events-none absolute -inset-1/4 opacity-40"
           style={{
-            backgroundImage:
-              "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.85) 0deg 0.5deg, transparent 0.5deg 26deg)",
+            background:
+              "radial-gradient(38% 30% at 30% 40%, rgba(90,120,255,0.20), transparent 70%), radial-gradient(30% 26% at 70% 65%, rgba(255,60,120,0.16), transparent 70%)",
           }}
-          animate={{ rotate: flying ? 360 : 0 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          animate={{ x: flying ? [-12, 12, -12] : 0, y: [6, -6, 6] }}
+          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
         />
-        {/* baseline ticks */}
+        {/* horizon line */}
         <div className="absolute inset-x-0 bottom-0 h-10 border-t border-white/[0.07]" />
 
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -241,26 +272,55 @@ const AviatorGame = () => {
           />
         </svg>
 
-        {/* plane */}
+        {/* rocket */}
         <motion.div
           className="absolute"
           style={{ left: `${px}%`, bottom: `${py}%` }}
           animate={
             phase === "crashed"
-              ? { x: 260, y: -170, opacity: 0, rotate: 18 }
-              : { x: 0, y: flying ? [0, -5, 0] : 0, opacity: phase === "betting" ? 0.35 : 1, rotate: -14 }
+              ? { x: 260, y: -170, opacity: 0, rotate: -45 }
+              : { x: 0, y: flying ? [0, -4, 0] : 0, opacity: phase === "betting" ? 0.4 : 1, rotate: -45 }
           }
-          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 1.8, repeat: Infinity }}
+          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
         >
           <svg
-            viewBox="0 0 64 40"
-            className="h-10 w-16 drop-shadow-[0_0_14px_hsl(var(--aviator)/0.75)]"
+            viewBox="0 0 48 64"
+            className="h-14 w-11 drop-shadow-[0_0_16px_hsl(var(--aviator)/0.6)]"
             fill="none"
           >
-            <path d="M4 26 L44 20 L60 22 L44 26 L14 30 Z" fill="hsl(var(--aviator))" />
-            <path d="M20 20 L28 6 L34 6 L30 20 Z" fill="hsl(var(--aviator-glow))" />
-            <path d="M18 27 L24 36 L30 36 L28 27 Z" fill="hsl(var(--aviator)/0.75)" />
-            <circle cx="47" cy="22" r="2.4" fill="#fff" opacity="0.85" />
+            <defs>
+              <linearGradient id="av-hull" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#ffffff" />
+                <stop offset="60%" stopColor="#dfe6f5" />
+                <stop offset="100%" stopColor="#9aa6c4" />
+              </linearGradient>
+              <linearGradient id="av-flame" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--aviator-glow))" />
+                <stop offset="100%" stopColor="hsl(var(--aviator) / 0)" />
+              </linearGradient>
+            </defs>
+            {/* thruster flame */}
+            <motion.path
+              d="M24 50 C28 55 27 60 24 64 C21 60 20 55 24 50 Z"
+              fill="url(#av-flame)"
+              animate={{ scaleY: flying ? [0.7, 1.15, 0.8] : 0.5, opacity: flying ? 1 : 0.4 }}
+              transition={{ duration: 0.45, repeat: Infinity, ease: "easeInOut" }}
+              style={{ transformOrigin: "24px 50px" }}
+            />
+            {/* fins */}
+            <path d="M16 34 C10 40 9 46 11 50 L16 45 Z" fill="hsl(var(--aviator))" />
+            <path d="M32 34 C38 40 39 46 37 50 L32 45 Z" fill="hsl(var(--aviator))" />
+            {/* hull */}
+            <path
+              d="M24 2 C33 12 37 24 37 36 C37 44 32 50 24 52 C16 50 11 44 11 36 C11 24 15 12 24 2 Z"
+              fill="url(#av-hull)"
+            />
+            {/* window */}
+            <circle cx="24" cy="24" r="6" fill="#0b1030" opacity="0.9" />
+            <circle cx="24" cy="24" r="6" fill="none" stroke="hsl(var(--aviator))" strokeWidth="1.6" />
+            <circle cx="21.6" cy="21.8" r="1.6" fill="#ffffff" opacity="0.6" />
+            {/* nose accent */}
+            <path d="M24 2 C27 7 29 12 30 17 C28 14 26 12 24 11 C22 12 20 14 18 17 C19 12 21 7 24 2 Z" fill="hsl(var(--aviator))" />
           </svg>
         </motion.div>
 
