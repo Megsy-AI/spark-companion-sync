@@ -44,7 +44,7 @@ const ARCADE: GameEntry[] = [
     name: "Hextris",
     tagline: "Fast hexagon puzzle",
     src: "/games/hextris/index.html",
-    cover: "/games/hextris/images/logo.png",
+    cover: "/games/hextris/images/android.png",
   },
   {
     slug: "2048",
@@ -64,14 +64,13 @@ const ARCADE: GameEntry[] = [
     name: "Clumsy Bird",
     tagline: "One-tap arcade classic",
     src: "/games/clumsy-bird/index.html",
-    cover: "/games/clumsy-bird/data/img/gui/logo.png",
   },
   {
     slug: "pacman",
     name: "Pac-Man",
     tagline: "Chase the pellets",
     src: "/games/pacman-canvas/index.html",
-    cover: "/games/pacman-canvas/img/apple-touch-icon.png",
+    cover: "/games/pacman-canvas/img/Icon-300x300.png",
   },
 ];
 
