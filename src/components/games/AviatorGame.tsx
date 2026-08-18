@@ -338,8 +338,8 @@ const AviatorGame = () => {
             {phase === "betting" ? (
               <motion.div key="wait" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
                 <p className="text-[10px] uppercase tracking-[0.38em] text-muted-foreground">Next round in</p>
-                <p className="mt-2 font-display text-[56px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
-                <div className="mx-auto mt-5 h-[3px] w-40 overflow-hidden rounded-full bg-white/10">
+                <p className="mt-2 font-display text-[40px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
+                <div className="mx-auto mt-3 h-[3px] w-32 overflow-hidden rounded-full bg-white/10">
                   <div
                     className="h-full rounded-full transition-[width] duration-75"
                     style={{ width: `${(countdown / BETTING_MS) * 100}%`, background: "hsl(var(--aviator))" }}
@@ -349,7 +349,7 @@ const AviatorGame = () => {
             ) : (
               <motion.div key="mult" initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
                 <p
-                  className="font-display text-[68px] leading-none tabular-nums"
+                  className="font-display text-[46px] leading-none tabular-nums"
                   style={{
                     color: phase === "crashed" ? "hsl(var(--aviator-glow))" : "hsl(0 0% 100%)",
                     textShadow: "0 0 40px hsl(var(--aviator) / 0.4)",
@@ -381,7 +381,7 @@ const AviatorGame = () => {
       {result && <p className="text-center text-[12px] text-muted-foreground">{result}</p>}
 
       {/* Bet panel */}
-      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-3">
+      <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-2.5">
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <div className="flex h-12 items-center justify-between rounded-2xl border border-white/[0.10] bg-black/30 px-2">
@@ -422,7 +422,7 @@ const AviatorGame = () => {
               type="button"
               onClick={() => void cashout()}
               disabled={busy}
-              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-primary-foreground disabled:opacity-60"
+              className="flex h-[74px] w-[42%] flex-col items-center justify-center rounded-2xl text-primary-foreground disabled:opacity-60"
               style={{ background: "linear-gradient(180deg, hsl(var(--primary)), hsl(158 78% 30%))" }}
             >
               <span className="text-[11px] uppercase tracking-[0.2em] opacity-80">Cash out</span>
@@ -433,7 +433,7 @@ const AviatorGame = () => {
               type="button"
               onClick={placeBet}
               disabled={queued !== null || phase !== "betting"}
-              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
+              className="flex h-[74px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
               style={{ background: "linear-gradient(180deg, hsl(var(--aviator-glow)), hsl(var(--aviator)))" }}
             >
               <span className="text-[11px] uppercase tracking-[0.2em] opacity-90">
@@ -446,7 +446,7 @@ const AviatorGame = () => {
       </div>
 
       {/* Live bets */}
-      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-4">
+      <div className="rounded-[22px] border border-white/[0.08] bg-white/[0.035] p-3">
         <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
           <span>Player</span>
           <span>Bet</span>
