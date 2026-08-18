@@ -1,16 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { lowEndDevice } from "@/lib/perf";
+import { useEffect, useRef } from "react";
 
 const bgVideoMp4 = "/bg-loop.mp4";
 
+/** Global video background shared by every page. */
 const StarryBackground = () => {
   const ref = useRef<HTMLVideoElement>(null);
-  // Weak devices keep the static gradient: decoding a fullscreen loop behind
-  // blurred glass panels is the single most expensive thing on this screen.
-  const [useVideo] = useState(() => !lowEndDevice());
 
   useEffect(() => {
-    if (!useVideo) return;
     const v = ref.current;
     if (!v) return;
     v.muted = true;
@@ -32,26 +28,22 @@ const StarryBackground = () => {
       document.removeEventListener("click", play);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [useVideo]);
+  }, []);
 
   return (
     <div className="liquid-bg" aria-hidden="true">
-      {useVideo && (
-        <video
-          ref={ref}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          disablePictureInPicture
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={bgVideoMp4} type="video/mp4" />
-        </video>
-      )}
-      {!useVideo && <div className="liquid-bg__veil" />}
-
+      <video
+        ref={ref}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src={bgVideoMp4} type="video/mp4" />
+      </video>
     </div>
   );
 };
