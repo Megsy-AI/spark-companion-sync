@@ -226,7 +226,7 @@ const ServersPage = () => {
                 </div>
 
 
-                <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="mt-4 grid grid-cols-2 gap-2 px-4 pb-4">
                   <button
                     type="button"
                     className="btn-ink h-11 text-xs font-semibold"
