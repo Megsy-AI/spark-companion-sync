@@ -173,15 +173,48 @@ const AviatorGame = () => {
     setPhase("flying");
   };
 
-  const placeBet = () => {
+  /** Not enough Gram? Open a TON top-up for the shortfall instead of blocking the bet. */
+  const topUp = async (amountTon: number) => {
+    setTopping(true);
+    try {
+      setResult(`Opening a ${fmt(amountTon)} Gram top-up…`);
+      const tx = await sendTonPayment(tonConnectUI, {
+        amountTon,
+        telegramId: user.telegramUser.id,
+        action: "deposit",
+        metadata: { source: "aviator" },
+      });
+      const verification = await verifyTonOnChain(tx.intentId, tx.boc, tonConnectUI.account?.address);
+      await refreshProfile();
+      if (!verification.verified) {
+        setResult("Top-up sent — it will be credited shortly.");
+        return false;
+      }
+      setResult(`Topped up ${fmt(tx.amountTon)} Gram`);
+      return true;
+    } catch (err) {
+      const msg = err instanceof PaymentError ? err.message : "Top-up failed. Please try again.";
+      toast({ title: "Top-up", description: msg, variant: "destructive" });
+      setResult(null);
+      return false;
+    } finally {
+      setTopping(false);
+    }
+  };
+
+  const placeBet = async () => {
     if (!Number.isFinite(stake) || stake <= 0) return;
     if (stake > balance) {
-      toast({ title: "Bet failed", description: errorText("insufficient_funds"), variant: "destructive" });
+      const shortfall = Math.max(0.1, Math.ceil((stake - balance) * 100) / 100);
+      const ok = await topUp(shortfall);
+      if (!ok) return;
+      setQueued(stake);
       return;
     }
     setResult(null);
     setQueued(stake);
   };
+
 
   const cashout = async () => {
     if (!betId) return;
