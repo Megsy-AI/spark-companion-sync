@@ -235,6 +235,10 @@
     font-weight: 700;
   }
   .btn-ink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
     background: hsl(var(--action));
     color: hsl(var(--action-foreground));
     border-radius: 9999px;
@@ -247,6 +251,10 @@
     opacity: 0.5;
   }
   .btn-ink-soft {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
     background: hsl(var(--muted));
     color: hsl(var(--foreground));
     border-radius: 9999px;
@@ -255,6 +263,7 @@
   .btn-ink-soft:active {
     transform: scale(0.98);
   }
+
 
 
 
