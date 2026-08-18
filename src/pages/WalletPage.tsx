@@ -14,6 +14,7 @@ import { PaymentError, sendTonPayment, TON_FEE_BUFFER } from "@/lib/ton";
 import { createTransaction, isWalletVerified, verifyTonOnChain } from "@/lib/game-api";
 import { payWithStars, STARS_PRICES, type StarsProductId } from "@/lib/stars";
 import TelegramStar from "@/components/TelegramStar";
+import { useCoinPrices, formatUsd } from "@/hooks/use-coin-prices";
 
 import novaIconAsset from "@/assets/nova-icon.jpg.asset.json";
 const NOVA_ICON = novaIconAsset.url;
@@ -39,6 +40,7 @@ const WalletPage = () => {
   const navigate = useNavigate();
   const [tonConnectUI] = useTonConnectUI();
   const address = useTonAddress();
+  const markets = useCoinPrices();
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -143,11 +145,39 @@ const WalletPage = () => {
   }
 
 
+  const gramPrice = markets["the-open-network"]?.price || TON_USD;
   const balances = [
-    { symbol: "$NOVA", balance: user.siriBalance, color: "text-primary", icon: null, usd: 0 },
-    { symbol: "Gram", balance: user.tonBalance, color: "text-ton-blue", icon: TON_ICON, usd: user.tonBalance * TON_USD },
-    { symbol: "USDT", balance: user.usdtBalance, color: "text-neon-green", icon: USDT_ICON, usd: user.usdtBalance },
+    { symbol: "$NOVA", balance: user.siriBalance, icon: NOVA_ICON, price: 0, usd: 0 },
+    {
+      symbol: "Gram",
+      balance: user.tonBalance,
+      icon: TON_ICON,
+      price: gramPrice,
+      usd: user.tonBalance * gramPrice,
+    },
+    {
+      symbol: "USDT",
+      balance: user.usdtBalance,
+      icon: USDT_ICON,
+      price: markets["tether"]?.price || 1,
+      usd: user.usdtBalance * (markets["tether"]?.price || 1),
+    },
+    {
+      symbol: "DOGS",
+      balance: 0,
+      icon: markets["dogs-2"]?.image || "",
+      price: markets["dogs-2"]?.price || 0,
+      usd: 0,
+    },
+    {
+      symbol: "NOT",
+      balance: 0,
+      icon: markets["notcoin"]?.image || "",
+      price: markets["notcoin"]?.price || 0,
+      usd: 0,
+    },
   ];
+
 
   const handleDisconnect = async () => {
     await tonConnectUI.disconnect();
@@ -275,7 +305,7 @@ const WalletPage = () => {
       >
         <p className="paper-eyebrow">Total balance</p>
         <h2 className="mt-1 font-display text-[44px] leading-none tracking-tight text-foreground">
-          ${(user.tonBalance * 3.5 + user.usdtBalance + Number(user.rewardBalance ?? 0)).toFixed(2)}
+          ${(user.tonBalance * (markets["the-open-network"]?.price || TON_USD) + user.usdtBalance + Number(user.rewardBalance ?? 0)).toFixed(2)}
         </h2>
 
         <div className="mt-5 grid grid-cols-2 gap-2.5">
@@ -336,7 +366,9 @@ const WalletPage = () => {
 
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
-              <p className="text-[11px] text-muted-foreground">Available</p>
+              <p className="text-[11px] text-muted-foreground">
+                {b.price > 0 ? formatUsd(b.price) : "—"}
+              </p>
             </div>
             <div className="text-right">
               <p className="font-display text-base text-foreground">
@@ -351,6 +383,7 @@ const WalletPage = () => {
           </div>
         ))}
       </motion.div>
+
 
       {/* Connection */}
       <p className="paper-eyebrow mb-2 px-1">Wallet</p>
