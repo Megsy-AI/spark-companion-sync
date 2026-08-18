@@ -19,13 +19,13 @@ const QUICK = [0.1, 0.5, 1, 5];
 const randomBust = () => Math.min(25, Math.max(1.05, 0.96 / (1 - Math.random())));
 
 /** Static starfield (generated once so stars never jump between renders). */
-const STARS = Array.from({ length: 90 }, (_, i) => {
+const STARS = Array.from({ length: 70 }, (_, i) => {
   const r = (n: number) => (((Math.sin(i * 12.9898 + n * 78.233) * 43758.5453) % 1) + 1) % 1;
   return {
     x: r(1) * 100,
     y: r(2) * 100,
-    size: 0.6 + r(3) * 1.7,
-    opacity: 0.25 + r(4) * 0.6,
+    size: 0.5 + r(3) * 1.4,
+    opacity: 0.15 + r(4) * 0.45,
     delay: r(5) * 4,
     dur: 2.4 + r(6) * 3.6,
   };
@@ -199,17 +199,17 @@ const AviatorGame = () => {
   };
 
   const progress = Math.min(1, secondsFor(mult) / secondsFor(14));
-  const px = 8 + 76 * progress;
-  const py = 12 + 62 * progress;
+  const px = 8 + 78 * progress;
+  const py = 12 + 70 * progress;
   const flying = phase === "flying";
   const step = (d: number) => setStake((s) => Math.max(0.1, Number((s + d).toFixed(2))));
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Recent rounds */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {history.map((h, i) => (
-          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
+          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
             {h.toFixed(2)}x
           </span>
         ))}
@@ -217,10 +217,10 @@ const AviatorGame = () => {
 
       {/* Space */}
       <div
-        className="relative h-[420px] overflow-hidden rounded-[28px] border border-white/10"
+        className="relative h-[520px] overflow-hidden rounded-[32px] border border-white/[0.08]"
         style={{
           background:
-            "radial-gradient(120% 90% at 18% 8%, rgba(120,80,255,0.22), transparent 60%), radial-gradient(100% 80% at 88% 92%, hsl(var(--aviator) / 0.22), transparent 62%), linear-gradient(180deg, #070a1c 0%, #05061a 55%, #020209 100%)",
+            "radial-gradient(120% 100% at 50% 0%, rgba(60,180,220,0.10), transparent 60%), linear-gradient(180deg, hsl(var(--aviator-sky)) 0%, #05070f 100%)",
         }}
       >
         {/* starfield */}
@@ -234,131 +234,71 @@ const AviatorGame = () => {
                 top: `${s.y}%`,
                 width: s.size,
                 height: s.size,
-                boxShadow: s.size > 1.6 ? "0 0 6px rgba(255,255,255,0.8)" : undefined,
+                boxShadow: s.size > 1.3 ? "0 0 5px rgba(255,255,255,0.6)" : undefined,
               }}
               animate={{ opacity: [s.opacity * 0.35, s.opacity, s.opacity * 0.35] }}
               transition={{ duration: s.dur, delay: s.delay, repeat: Infinity, ease: "easeInOut" }}
             />
           ))}
         </div>
-        {/* distant nebula drift */}
-        <motion.div
-          className="pointer-events-none absolute -inset-1/4 opacity-40"
-          style={{
-            background:
-              "radial-gradient(38% 30% at 30% 40%, rgba(90,120,255,0.20), transparent 70%), radial-gradient(30% 26% at 70% 65%, rgba(255,60,120,0.16), transparent 70%)",
-          }}
-          animate={{ x: flying ? [-12, 12, -12] : 0, y: [6, -6, 6] }}
-          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
-        />
-        {/* horizon line */}
-        <div className="absolute inset-x-0 bottom-0 h-10 border-t border-white/[0.07]" />
 
+        {/* horizon line */}
+        <div className="absolute inset-x-0 bottom-0 h-12 border-t border-white/[0.06]" />
+
+        {/* curve */}
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
             <linearGradient id="av-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--aviator))" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="hsl(var(--aviator))" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="hsl(var(--aviator))" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="hsl(var(--aviator))" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="av-line" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(var(--aviator))" />
+              <stop offset="100%" stopColor="hsl(var(--aviator-glow))" />
             </linearGradient>
           </defs>
           <path d={`M8,90 Q${8 + (px - 8) * 0.66},${90 - (78 - py) * 0.1} ${px},${100 - py} L${px},90 Z`} fill="url(#av-fill)" />
           <path
             d={`M8,90 Q${8 + (px - 8) * 0.66},${90 - (78 - py) * 0.1} ${px},${100 - py}`}
             fill="none"
-            stroke="hsl(var(--aviator))"
-            strokeWidth="1.4"
+            stroke="url(#av-line)"
+            strokeWidth="1.6"
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
         </svg>
 
-        {/* rocket — steady, upright, blue thruster */}
+        {/* moving dot */}
         <motion.div
-          className="absolute"
+          className="absolute z-10"
           style={{ left: `${px}%`, bottom: `${py}%` }}
           animate={
             phase === "crashed"
-              ? { x: 240, y: -180, opacity: 0 }
-              : { x: 0, y: 0, opacity: phase === "betting" ? 0.45 : 1 }
+              ? { scale: 0, opacity: 0 }
+              : { scale: 1, opacity: phase === "betting" ? 0.35 : 1 }
           }
-          transition={{ duration: phase === "crashed" ? 0.85 : 0.2, ease: phase === "crashed" ? "easeIn" : "linear" }}
+          transition={{ duration: phase === "crashed" ? 0.45 : 0.2, ease: "easeOut" }}
         >
-          <svg
-            viewBox="0 0 64 96"
-            className="h-24 w-16 drop-shadow-[0_0_22px_rgba(80,170,255,0.5)]"
-            fill="none"
-            style={{ transform: "rotate(38deg)", transformOrigin: "50% 50%" }}
-          >
-            <defs>
-              <linearGradient id="av-hull" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#8fa3c8" />
-                <stop offset="26%" stopColor="#ffffff" />
-                <stop offset="62%" stopColor="#eef2fb" />
-                <stop offset="100%" stopColor="#7f8db0" />
-              </linearGradient>
-              <linearGradient id="av-nose" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#4aa3ff" />
-                <stop offset="55%" stopColor="#8fd0ff" />
-                <stop offset="100%" stopColor="#2f7ede" />
-              </linearGradient>
-              <linearGradient id="av-flame" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#eaf8ff" />
-                <stop offset="30%" stopColor="#63bcff" />
-                <stop offset="100%" stopColor="rgba(79,178,255,0)" />
-              </linearGradient>
-              <radialGradient id="av-thrust-glow" cx="50%" cy="0%" r="75%">
-                <stop offset="0%" stopColor="rgba(130,205,255,0.8)" />
-                <stop offset="100%" stopColor="rgba(80,170,255,0)" />
-              </radialGradient>
-            </defs>
-            {/* thruster glow */}
-            <motion.ellipse
-              cx="32"
-              cy="74"
-              rx="15"
-              ry="18"
-              fill="url(#av-thrust-glow)"
-              animate={{ opacity: flying ? [0.5, 0.95, 0.5] : 0.28 }}
-              transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
+          <div className="relative flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+            <span
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "hsl(var(--aviator-glow))",
+                boxShadow: "0 0 20px 6px hsl(var(--aviator) / 0.55), 0 0 40px 12px hsl(var(--aviator) / 0.25)",
+              }}
             />
-            {/* thruster flame */}
-            <motion.path
-              d="M32 64 C38 72 36 82 32 92 C28 82 26 72 32 64 Z"
-              fill="url(#av-flame)"
-              animate={{ scaleY: flying ? [0.8, 1.18, 0.9] : 0.4, opacity: flying ? 1 : 0.4 }}
-              transition={{ duration: 0.4, repeat: Infinity, ease: "easeInOut" }}
-              style={{ transformOrigin: "32px 64px" }}
-            />
-            {/* fins */}
-            <path d="M20 46 C12 54 10 62 12 68 L20 60 Z" fill="#3f8ce0" />
-            <path d="M44 46 C52 54 54 62 52 68 L44 60 Z" fill="#3f8ce0" />
-            {/* hull */}
-            <path
-              d="M32 4 C42 16 46 30 46 44 C46 54 42 62 32 66 C22 62 18 54 18 44 C18 30 22 16 32 4 Z"
-              fill="url(#av-hull)"
-            />
-            {/* nose cone */}
-            <path d="M32 4 C39 13 43 22 44.6 30 C40 26 36 24 32 23.4 C28 24 24 26 19.4 30 C21 22 25 13 32 4 Z" fill="url(#av-nose)" />
-            {/* body seam */}
-            <path d="M32 24 L32 64" stroke="#c3cee6" strokeWidth="0.8" opacity="0.5" />
-            {/* window */}
-            <circle cx="32" cy="38" r="7.5" fill="#07122c" />
-            <circle cx="32" cy="38" r="7.5" fill="none" stroke="#7cc0ff" strokeWidth="2" />
-            <circle cx="29.4" cy="35.6" r="2" fill="#ffffff" opacity="0.7" />
-            {/* engine ring */}
-            <path d="M23 64 L41 64 L38 68 L26 68 Z" fill="#5f6f92" />
-          </svg>
-
+            <span className="relative h-2 w-2 rounded-full bg-white" />
+          </div>
         </motion.div>
 
         {/* readout */}
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center">
+        <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 text-center">
           <AnimatePresence mode="wait">
             {phase === "betting" ? (
               <motion.div key="wait" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <p className="text-[10px] uppercase tracking-[0.42em] text-muted-foreground">Waiting for next round</p>
-                <p className="mt-1 font-display text-[52px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
-                <div className="mx-auto mt-4 h-[3px] w-44 overflow-hidden rounded-full bg-white/10">
+                <p className="text-[10px] uppercase tracking-[0.38em] text-muted-foreground">Next round in</p>
+                <p className="mt-2 font-display text-[56px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
+                <div className="mx-auto mt-5 h-[3px] w-40 overflow-hidden rounded-full bg-white/10">
                   <div
                     className="h-full rounded-full transition-[width] duration-75"
                     style={{ width: `${(countdown / BETTING_MS) * 100}%`, background: "hsl(var(--aviator))" }}
@@ -368,16 +308,16 @@ const AviatorGame = () => {
             ) : (
               <motion.div key="mult" initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
                 <p
-                  className="font-display text-[62px] leading-none tabular-nums"
+                  className="font-display text-[68px] leading-none tabular-nums"
                   style={{
-                    color: phase === "crashed" ? "hsl(var(--aviator))" : "hsl(0 0% 100%)",
-                    textShadow: "0 0 34px hsl(var(--aviator) / 0.45)",
+                    color: phase === "crashed" ? "hsl(var(--aviator-glow))" : "hsl(0 0% 100%)",
+                    textShadow: "0 0 40px hsl(var(--aviator) / 0.4)",
                   }}
                 >
                   {(crashAt ?? mult).toFixed(2)}x
                 </p>
                 {phase === "crashed" && (
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.42em]" style={{ color: "hsl(var(--aviator))" }}>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.38em]" style={{ color: "hsl(var(--aviator-glow))" }}>
                     Flew away
                   </p>
                 )}
@@ -388,8 +328,8 @@ const AviatorGame = () => {
 
         {queued !== null && (
           <span
-            className="absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold text-foreground"
-            style={{ background: "hsl(var(--aviator) / 0.18)", border: "1px solid hsl(var(--aviator) / 0.45)" }}
+            className="absolute left-4 top-4 rounded-full px-3 py-1.5 text-[11px] font-semibold text-foreground"
+            style={{ background: "hsl(var(--aviator) / 0.14)", border: "1px solid hsl(var(--aviator) / 0.4)" }}
           >
             {fmt(queued)} Gram in play
           </span>
@@ -400,15 +340,15 @@ const AviatorGame = () => {
       {result && <p className="text-center text-[12px] text-muted-foreground">{result}</p>}
 
       {/* Bet panel */}
-      <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-3">
+      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-3">
         <div className="flex items-center gap-3">
           <div className="flex-1">
-            <div className="flex h-12 items-center justify-between rounded-2xl border border-white/12 bg-black/40 px-2">
+            <div className="flex h-12 items-center justify-between rounded-2xl border border-white/[0.10] bg-black/30 px-2">
               <button
                 type="button"
                 onClick={() => step(-0.1)}
                 aria-label="Decrease bet"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-foreground"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.07] text-foreground"
               >
                 <Minus className="h-3.5 w-3.5" />
               </button>
@@ -417,7 +357,7 @@ const AviatorGame = () => {
                 type="button"
                 onClick={() => step(0.1)}
                 aria-label="Increase bet"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-foreground"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.07] text-foreground"
               >
                 <Plus className="h-3.5 w-3.5" />
               </button>
@@ -428,7 +368,7 @@ const AviatorGame = () => {
                   key={q}
                   type="button"
                   onClick={() => setStake(q)}
-                  className="rounded-xl border border-white/10 bg-white/[0.04] py-1.5 text-[11px] text-muted-foreground"
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.03] py-1.5 text-[11px] text-muted-foreground"
                 >
                   {q}
                 </button>
@@ -465,7 +405,7 @@ const AviatorGame = () => {
       </div>
 
       {/* Live bets */}
-      <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-4">
+      <div className="rounded-[28px] border border-white/[0.08] bg-white/[0.035] p-4">
         <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
           <span>Player</span>
           <span>Bet</span>
