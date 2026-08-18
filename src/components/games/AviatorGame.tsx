@@ -47,9 +47,12 @@ const NAMES = ["a***i", "m***o", "s***a", "k***l", "n***r", "d***z", "y***i", "o
 const AviatorGame = () => {
   const { user, refreshProfile } = useApp();
   const { toast } = useToast();
+  const [tonConnectUI] = useTonConnectUI();
   const balance = Number(user.tonBalance || 0);
 
+  const [topping, setTopping] = useState(false);
   const [stake, setStake] = useState(0.5);
+
   const [phase, setPhase] = useState<Phase>("betting");
   const [countdown, setCountdown] = useState(BETTING_MS);
   const [queued, setQueued] = useState<number | null>(null);
