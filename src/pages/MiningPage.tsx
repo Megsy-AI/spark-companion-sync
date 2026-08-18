@@ -24,57 +24,66 @@ const MiningPage = () => {
   return (
     <SpotlightHero title="NOVA AI" center>
       <div className="flex w-full flex-col px-5 pb-28 pt-2">
-
-        {/* Bottom glass stack */}
         <motion.div
-          className="nv-card ze-reveal ze-d2 p-5"
-          initial={{ opacity: 0, y: 18 }}
+          className="nv-card p-6"
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="nv-eyebrow block text-center">$NOVA Balance</p>
-          <p className="hero-title mt-1 text-center text-5xl leading-none">
+          <p className="hero-title mt-1.5 text-center text-[56px] leading-none tracking-tight">
             {user.siriBalance.toLocaleString("en-US", { maximumFractionDigits: 2 })}
           </p>
-
-          {user.isMining && (
-            <div className="mt-4">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="hero-dim text-[10px] uppercase tracking-widest">Mining</span>
-                <span className="hero-fg text-[11px] font-display">{progress.toFixed(1)}%</span>
-              </div>
-              <Progress value={progress} className="h-1 bg-white/15" />
-            </div>
-          )}
 
           <button
             onClick={user.isMining ? undefined : startMining}
             disabled={user.isMining}
-            className="nv-pill mt-5 w-full"
+            className="nv-pill mt-6 w-full"
           >
-            {user.isMining ? timeLeft : "Start Mining"}
+            {user.isMining ? `Mining · ${timeLeft}` : "Start Mining"}
           </button>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            {[
-              { label: "Gram", value: user.tonBalance, icon: TON_ICON },
-              { label: "USDT", value: user.usdtBalance, icon: USDT_ICON },
-            ].map((s) => (
-              <div key={s.label} className="nv-card ze-reveal ze-d4 p-3.5">
-                <div className="mb-1.5 flex items-center gap-2">
-                  <img src={s.icon} alt={s.label} className="h-4 w-4 rounded-full"  loading="lazy" decoding="async" />
-                  <p className="nv-eyebrow">{s.label}</p>
-                </div>
-                <p className="nv-stat-num">
+          {user.isMining && (
+            <div className="mt-4">
+              <Progress value={progress} className="h-1 bg-white/15" />
+              <p className="mt-2 text-center text-[10px] uppercase tracking-[0.18em] text-white/60">
+                {progress.toFixed(0)}% complete
+              </p>
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div
+          className="mt-3 grid grid-cols-2 gap-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {[
+            { label: "Gram", value: user.tonBalance, icon: TON_ICON },
+            { label: "USDT", value: user.usdtBalance, icon: USDT_ICON },
+          ].map((s) => (
+            <div key={s.label} className="nv-card flex items-center gap-3 p-4">
+              <img
+                src={s.icon}
+                alt={s.label}
+                className="h-8 w-8 shrink-0 rounded-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="min-w-0">
+                <p className="nv-eyebrow">{s.label}</p>
+                <p className="nv-stat-num truncate">
                   {Number(s.value || 0).toLocaleString("en-US", { maximumFractionDigits: 4 })}
                 </p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </motion.div>
       </div>
     </SpotlightHero>
   );
 };
+
 
 export default MiningPage;
