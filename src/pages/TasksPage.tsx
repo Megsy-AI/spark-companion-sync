@@ -190,33 +190,41 @@ const TasksPage = () => {
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: Math.min(i, 8) * 0.035 }}
                       onClick={() => void handleTask(task)}>
-                      <div className="p-4">
+                      <div className="p-3.5">
                         <div className="flex items-center gap-3.5">
-                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action">
-                            <Zap className="h-4 w-4 text-action-foreground" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-foreground truncate">{task.title}</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
-                              {task.verification_type !== 'none'
-                                ? (VERIFICATION_LABELS[task.verification_type] || "Complete requirement")
-                                : "Tap to open"}
-                            </p>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-2">
-                            <span className="text-xs font-bold text-primary">
-                              +{task.reward_amount} {label}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); void handleTask(task); }}
-                              disabled={claiming === task.id}
-                              className="btn-ink h-8 px-4 text-[11px] font-semibold tracking-wide"
-                            >
-                              {claiming === task.id ? "..." : "Go"}
-                            </button>
+                          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-2xl border border-border bg-card">
+                            <img
+                              src={artForTask(task.title)}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              width={512}
+                              height={512}
+                              className="h-full w-full object-cover"
+                            />
                           </div>
 
+                          <div className="min-w-0 flex-1">
+                            <p className="font-display text-[15px] leading-tight text-foreground">{task.title}</p>
+                            <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">
+                              {task.verification_type !== 'none' && task.verification_type !== 'auto'
+                                ? (VERIFICATION_LABELS[task.verification_type] || "Complete requirement")
+                                : "Open the mini app, then come back"}
+                            </p>
+                            <span className="mt-2 inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-bold text-foreground">
+                              <Zap className="h-3 w-3" />
+                              +{task.reward_amount} {label}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); void handleTask(task); }}
+                            disabled={claiming === task.id}
+                            className="btn-ink h-10 w-16 shrink-0 text-[11px] font-semibold uppercase tracking-widest"
+                          >
+                            {claiming === task.id ? "…" : "Go"}
+                          </button>
                         </div>
                         {claiming === task.id && (
                           <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
@@ -225,6 +233,7 @@ const TasksPage = () => {
                           </div>
                         )}
                       </div>
+
                     </motion.div>
                   );
                 })}
