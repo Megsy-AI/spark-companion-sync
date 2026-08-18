@@ -47,11 +47,11 @@ const StarryBackground = () => {
           disablePictureInPicture
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src="/bg-loop.webm" type="video/webm" />
           <source src={bgVideoMp4} type="video/mp4" />
         </video>
       )}
-      <div className="liquid-bg__veil" />
+      {!useVideo && <div className="liquid-bg__veil" />}
+
     </div>
   );
 };
