@@ -15,7 +15,8 @@ import { createTransaction, isWalletVerified, verifyTonOnChain } from "@/lib/gam
 import { payWithStars, STARS_PRICES, type StarsProductId } from "@/lib/stars";
 import TelegramStar from "@/components/TelegramStar";
 
-import NOVA_ICON from "@/assets/nova-coin.png";
+import novaIconAsset from "@/assets/nova-icon.jpg.asset.json";
+const NOVA_ICON = novaIconAsset.url;
 
 
 const TON_ICON = "/images/gram-icon.png";
@@ -327,7 +328,7 @@ const WalletPage = () => {
             <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-card">
               {b.icon
                 ? <img src={b.icon} alt={b.symbol} className="h-6 w-6 rounded-full" loading="lazy" />
-                : <img src={NOVA_ICON} alt="NOVA" className="h-6 w-6" loading="lazy" />}
+                : <img src={NOVA_ICON} alt="NOVA" className="h-full w-full object-cover" loading="lazy" />}
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
