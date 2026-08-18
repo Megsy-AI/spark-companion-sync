@@ -18,6 +18,19 @@ const QUICK = [0.1, 0.5, 1, 5];
 /** Client-side visual bust point; the server always has the final word on payouts. */
 const randomBust = () => Math.min(25, Math.max(1.05, 0.96 / (1 - Math.random())));
 
+/** Static starfield (generated once so stars never jump between renders). */
+const STARS = Array.from({ length: 90 }, (_, i) => {
+  const r = (n: number) => (((Math.sin(i * 12.9898 + n * 78.233) * 43758.5453) % 1) + 1) % 1;
+  return {
+    x: r(1) * 100,
+    y: r(2) * 100,
+    size: 0.6 + r(3) * 1.7,
+    opacity: 0.25 + r(4) * 0.6,
+    delay: r(5) * 4,
+    dur: 2.4 + r(6) * 3.6,
+  };
+});
+
 const chipTone = (m: number) =>
   m >= 10
     ? "text-[hsl(var(--aviator-glow))] border-[hsl(var(--aviator)/0.5)] bg-[hsl(var(--aviator)/0.12)]"
