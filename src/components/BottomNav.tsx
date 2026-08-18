@@ -1,9 +1,8 @@
 import { Pickaxe, Gamepad2, CircleCheckBig, Gem, Wallet } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { prefetchRoute } from "@/routes";
-import { useNavRevealed } from "@/hooks/use-nav-reveal";
 
 const navItems = [
   { to: "/", icon: Pickaxe, label: "Mine" },
@@ -15,19 +14,14 @@ const navItems = [
 
 const BottomNav = () => {
   const location = useLocation();
-  const revealed = useNavRevealed();
-  const hidden = location.pathname.startsWith("/ai") && !revealed;
 
   return (
-    <AnimatePresence initial={false}>
-      {!hidden && (
         <motion.nav
           key="bottom-nav"
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 40, opacity: 0 }}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom,0px)+0.6rem)] pt-2"
+          className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-[calc(env(safe-area-inset-bottom,0px)+0.6rem)] pt-2"
         >
           <div className="mx-auto flex max-w-sm items-center justify-between gap-1 rounded-[26px] border border-white/12 bg-[rgba(18,26,24,0.72)] px-2 py-2 backdrop-blur-2xl shadow-[0_20px_44px_-24px_rgba(0,0,0,0.9)]">
             {navItems.map((item) => {
@@ -76,8 +70,6 @@ const BottomNav = () => {
             })}
           </div>
         </motion.nav>
-      )}
-    </AnimatePresence>
   );
 };
 
