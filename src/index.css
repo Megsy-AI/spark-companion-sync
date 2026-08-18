@@ -58,6 +58,10 @@
     --radius: 1.5rem;
     --ton-blue: 216 100% 56%;
     --neon-green: 158 78% 40%;
+    /* Aviator game surface */
+    --aviator: 349 89% 60%;
+    --aviator-glow: 350 100% 72%;
+    --aviator-sky: 260 40% 6%;
     --gold: 38 95% 55%;
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 160 22% 14%;

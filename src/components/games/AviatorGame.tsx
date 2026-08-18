@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import BetBar from "./BetBar";
+import { Minus, Plus } from "lucide-react";
 import { crashCashout, crashStart, errorText, fmt } from "@/lib/casino";
 import { useApp } from "@/context/AppContext";
 import { useToast } from "@/hooks/use-toast";
@@ -12,22 +12,27 @@ const secondsFor = (mult: number) => Math.log(mult) / Math.log(1.07);
 type Phase = "betting" | "flying" | "crashed";
 
 const BETTING_MS = 6000;
-const CRASHED_MS = 3500;
+const CRASHED_MS = 3200;
+const QUICK = [0.1, 0.5, 1, 5];
 
 /** Client-side visual bust point; the server always has the final word on payouts. */
 const randomBust = () => Math.min(25, Math.max(1.05, 0.96 / (1 - Math.random())));
 
 const chipTone = (m: number) =>
-  m >= 10 ? "text-fuchsia-400 border-fuchsia-400/40" : m >= 2 ? "text-emerald-400 border-emerald-400/40" : "text-sky-400 border-sky-400/40";
+  m >= 10
+    ? "text-[hsl(var(--aviator-glow))] border-[hsl(var(--aviator)/0.5)] bg-[hsl(var(--aviator)/0.12)]"
+    : m >= 2
+      ? "text-primary border-primary/40 bg-primary/10"
+      : "text-muted-foreground border-white/12 bg-white/[0.04]";
 
-const NAMES = ["Ali", "Mo", "Sara", "Kirill", "Nour", "Deniz", "Yuki", "Omar", "Lena", "Rafa"];
+const NAMES = ["a***i", "m***o", "s***a", "k***l", "n***r", "d***z", "y***i", "o***r", "l***a", "r***a"];
 
 const AviatorGame = () => {
   const { user, refreshProfile } = useApp();
   const { toast } = useToast();
   const balance = Number(user.tonBalance || 0);
 
-  const [stake, setStake] = useState("0.5");
+  const [stake, setStake] = useState(0.5);
   const [phase, setPhase] = useState<Phase>("betting");
   const [countdown, setCountdown] = useState(BETTING_MS);
   const [queued, setQueued] = useState<number | null>(null);
@@ -35,7 +40,7 @@ const AviatorGame = () => {
   const [mult, setMult] = useState(1);
   const [crashAt, setCrashAt] = useState<number | null>(null);
   const [result, setResult] = useState<string | null>(null);
-  const [history, setHistory] = useState<number[]>([2.31, 1.14, 5.72, 1.02, 3.4]);
+  const [history, setHistory] = useState<number[]>([2.31, 1.14, 5.72, 1.02, 3.4, 1.63]);
   const [busy, setBusy] = useState(false);
   const [players, setPlayers] = useState<{ name: string; bet: number; out?: number }[]>([]);
 
@@ -47,13 +52,12 @@ const AviatorGame = () => {
 
   const rollPlayers = () =>
     setPlayers(
-      Array.from({ length: 5 }, (_, i) => ({
-        name: NAMES[Math.floor(Math.random() * NAMES.length)] + (i % 2 ? "•" : ""),
+      Array.from({ length: 6 }, () => ({
+        name: NAMES[Math.floor(Math.random() * NAMES.length)],
         bet: Number((Math.random() * 4 + 0.2).toFixed(2)),
       })),
     );
 
-  /** Resolve the round: ask the server where it actually crashed. */
   const probe = useCallback(
     async (id: string) => {
       const res: any = await crashCashout(user.telegramUser.id, id, 1e6);
@@ -70,15 +74,16 @@ const AviatorGame = () => {
       setPhase("crashed");
       setCrashAt(at);
       setMult(at);
-      setHistory((h) => [Number(at.toFixed(2)), ...h].slice(0, 10));
-      setPlayers((ps) => ps.map((p) => (Math.random() > 0.55 ? { ...p, out: Number((1 + Math.random() * (at - 1)).toFixed(2)) } : p)));
-      if (!cashedRef.current && queued) setResult(`Flew away at ×${at.toFixed(2)} — lost ${fmt(queued)} Gram`);
+      setHistory((h) => [Number(at.toFixed(2)), ...h].slice(0, 12));
+      setPlayers((ps) =>
+        ps.map((p) => (Math.random() > 0.55 ? { ...p, out: Number((1 + Math.random() * (at - 1)).toFixed(2)) } : p)),
+      );
+      if (!cashedRef.current && queued) setResult(`Flew away at ×${at.toFixed(2)} · −${fmt(queued)} Gram`);
       setQueued(null);
     },
     [queued],
   );
 
-  /* Flight animation + resolution */
   useEffect(() => {
     if (phase !== "flying") return;
     let cancelled = false;
@@ -106,7 +111,6 @@ const AviatorGame = () => {
     };
   }, [phase, betId, probe, endRound]);
 
-  /* Round scheduler */
   useEffect(() => {
     if (phase === "betting") {
       rollPlayers();
@@ -118,7 +122,7 @@ const AviatorGame = () => {
           clearInterval(id);
           void takeOff();
         }
-      }, 100);
+      }, 80);
       return () => clearInterval(id);
     }
     if (phase === "crashed") {
@@ -153,14 +157,13 @@ const AviatorGame = () => {
   };
 
   const placeBet = () => {
-    const amount = Number(stake);
-    if (!Number.isFinite(amount) || amount <= 0) return;
-    if (amount > balance) {
+    if (!Number.isFinite(stake) || stake <= 0) return;
+    if (stake > balance) {
       toast({ title: "Bet failed", description: errorText("insufficient_funds"), variant: "destructive" });
       return;
     }
     setResult(null);
-    setQueued(amount);
+    setQueued(stake);
   };
 
   const cashout = async () => {
@@ -182,137 +185,216 @@ const AviatorGame = () => {
     setBusy(false);
   };
 
-  const progress = Math.min(1, secondsFor(mult) / secondsFor(12));
-  const px = 6 + 80 * progress;
-  const py = 10 + 66 * progress;
+  const progress = Math.min(1, secondsFor(mult) / secondsFor(14));
+  const px = 8 + 76 * progress;
+  const py = 12 + 62 * progress;
   const flying = phase === "flying";
+  const step = (d: number) => setStake((s) => Math.max(0.1, Number((s + d).toFixed(2))));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Recent rounds */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {history.map((h, i) => (
-          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-3 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
-            ×{h.toFixed(2)}
+          <span key={`${h}-${i}`} className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${chipTone(h)}`}>
+            {h.toFixed(2)}x
           </span>
         ))}
       </div>
 
       {/* Sky */}
-      <div className="relative h-[290px] overflow-hidden rounded-3xl border border-white/12 bg-[radial-gradient(120%_90%_at_20%_110%,hsl(var(--primary)/0.35),transparent_60%),linear-gradient(180deg,#150c25,#05030c)]">
+      <div
+        className="relative h-[300px] overflow-hidden rounded-[28px] border border-white/10"
+        style={{
+          background:
+            "radial-gradient(130% 100% at 12% 100%, hsl(var(--aviator) / 0.30), transparent 62%), linear-gradient(180deg, hsl(var(--aviator-sky)), #04030a)",
+        }}
+      >
+        {/* rotating rays */}
         <motion.div
-          className="absolute inset-0 opacity-[0.06]"
+          className="absolute -inset-1/4 opacity-[0.07]"
           style={{
-            backgroundImage: "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.6) 0deg 0.6deg, transparent 0.6deg 30deg)",
+            backgroundImage:
+              "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.85) 0deg 0.5deg, transparent 0.5deg 26deg)",
           }}
           animate={{ rotate: flying ? 360 : 0 }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
         />
+        {/* baseline ticks */}
+        <div className="absolute inset-x-0 bottom-0 h-10 border-t border-white/[0.07]" />
 
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
             <linearGradient id="av-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+              <stop offset="0%" stopColor="hsl(var(--aviator))" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="hsl(var(--aviator))" stopOpacity="0.02" />
             </linearGradient>
           </defs>
+          <path d={`M8,90 Q${8 + (px - 8) * 0.66},${90 - (78 - py) * 0.1} ${px},${100 - py} L${px},90 Z`} fill="url(#av-fill)" />
           <path
-            d={`M6,90 Q${6 + (px - 6) * 0.62},${90 - (90 - (100 - py)) * 0.12} ${px},${100 - py} L${px},90 Z`}
-            fill="url(#av-fill)"
-          />
-          <path
-            d={`M6,90 Q${6 + (px - 6) * 0.62},${90 - (90 - (100 - py)) * 0.12} ${px},${100 - py}`}
+            d={`M8,90 Q${8 + (px - 8) * 0.66},${90 - (78 - py) * 0.1} ${px},${100 - py}`}
             fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.2"
+            stroke="hsl(var(--aviator))"
+            strokeWidth="1.4"
             strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
           />
         </svg>
 
+        {/* plane */}
         <motion.div
-          className="absolute h-9 w-9"
+          className="absolute"
           style={{ left: `${px}%`, bottom: `${py}%` }}
           animate={
             phase === "crashed"
-              ? { x: 220, y: -140, opacity: 0, rotate: 25 }
-              : { x: 0, y: flying ? [0, -4, 0] : 0, opacity: 1, rotate: -12 }
+              ? { x: 260, y: -170, opacity: 0, rotate: 18 }
+              : { x: 0, y: flying ? [0, -5, 0] : 0, opacity: phase === "betting" ? 0.35 : 1, rotate: -14 }
           }
-          transition={phase === "crashed" ? { duration: 0.9, ease: "easeIn" } : { duration: 1.6, repeat: Infinity }}
+          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 1.8, repeat: Infinity }}
         >
-          <svg viewBox="0 0 24 24" className="h-9 w-9 drop-shadow-[0_0_10px_hsl(var(--primary)/0.7)]" fill="hsl(var(--primary))">
-            <path d="M2.5 13.5 21 12 2.5 10.5l1.8 1.5-1.8 1.5Zm6-3.2L6 4.5l2.4.2 3.6 5.1-3.5.5Zm0 3.4 3.5.5-3.6 5.1-2.4.2 2.5-5.8Z" />
+          <svg
+            viewBox="0 0 64 40"
+            className="h-10 w-16 drop-shadow-[0_0_14px_hsl(var(--aviator)/0.75)]"
+            fill="none"
+          >
+            <path d="M4 26 L44 20 L60 22 L44 26 L14 30 Z" fill="hsl(var(--aviator))" />
+            <path d="M20 20 L28 6 L34 6 L30 20 Z" fill="hsl(var(--aviator-glow))" />
+            <path d="M18 27 L24 36 L30 36 L28 27 Z" fill="hsl(var(--aviator)/0.75)" />
+            <circle cx="47" cy="22" r="2.4" fill="#fff" opacity="0.85" />
           </svg>
         </motion.div>
 
+        {/* readout */}
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center">
           <AnimatePresence mode="wait">
             {phase === "betting" ? (
-              <motion.div key="wait" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">Next round in</p>
-                <p className="font-display text-5xl text-foreground">{(countdown / 1000).toFixed(1)}s</p>
-                <div className="mx-auto mt-3 h-1 w-40 overflow-hidden rounded-full bg-white/10">
+              <motion.div key="wait" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                <p className="text-[10px] uppercase tracking-[0.42em] text-muted-foreground">Waiting for next round</p>
+                <p className="mt-1 font-display text-[52px] leading-none text-foreground">{(countdown / 1000).toFixed(1)}</p>
+                <div className="mx-auto mt-4 h-[3px] w-44 overflow-hidden rounded-full bg-white/10">
                   <div
-                    className="h-full rounded-full bg-primary transition-[width] duration-100"
-                    style={{ width: `${(countdown / BETTING_MS) * 100}%` }}
+                    className="h-full rounded-full transition-[width] duration-75"
+                    style={{ width: `${(countdown / BETTING_MS) * 100}%`, background: "hsl(var(--aviator))" }}
                   />
                 </div>
               </motion.div>
             ) : (
-              <motion.p
-                key="mult"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className={`font-display text-6xl ${phase === "crashed" ? "text-destructive" : "text-foreground"}`}
-              >
-                ×{(crashAt ?? mult).toFixed(2)}
-              </motion.p>
+              <motion.div key="mult" initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                <p
+                  className="font-display text-[62px] leading-none tabular-nums"
+                  style={{
+                    color: phase === "crashed" ? "hsl(var(--aviator))" : "hsl(0 0% 100%)",
+                    textShadow: "0 0 34px hsl(var(--aviator) / 0.45)",
+                  }}
+                >
+                  {(crashAt ?? mult).toFixed(2)}x
+                </p>
+                {phase === "crashed" && (
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.42em]" style={{ color: "hsl(var(--aviator))" }}>
+                    Flew away
+                  </p>
+                )}
+              </motion.div>
             )}
           </AnimatePresence>
-          {phase === "crashed" && (
-            <p className="mt-1 text-[12px] uppercase tracking-[0.3em] text-destructive">Flew away</p>
-          )}
         </div>
 
         {queued !== null && (
-          <span className="absolute left-4 top-4 rounded-full border border-primary/40 bg-primary/15 px-3 py-1 text-[11px] text-foreground">
-            Bet {fmt(queued)} Gram
+          <span
+            className="absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold text-foreground"
+            style={{ background: "hsl(var(--aviator) / 0.18)", border: "1px solid hsl(var(--aviator) / 0.45)" }}
+          >
+            {fmt(queued)} Gram in play
           </span>
         )}
+        <span className="absolute right-4 top-4 text-[11px] text-muted-foreground">Balance {fmt(balance)}</span>
       </div>
 
       {result && <p className="text-center text-[12px] text-muted-foreground">{result}</p>}
 
-      {/* Bet controls */}
-      {flying && betId ? (
-        <button
-          type="button"
-          onClick={() => void cashout()}
-          disabled={busy}
-          className="btn-ink h-14 w-full text-[13px] font-semibold uppercase tracking-widest disabled:opacity-50"
-        >
-          Cash out ×{mult.toFixed(2)} · {fmt((queued ?? 0) * mult)} Gram
-        </button>
-      ) : (
-        <BetBar
-          stake={stake}
-          onStake={setStake}
-          balance={balance}
-          busy={busy}
-          label={queued !== null ? "Waiting" : phase === "betting" ? "Bet" : "Next round"}
-          onPlay={placeBet}
-          disabled={queued !== null || phase !== "betting"}
-        />
-      )}
+      {/* Bet panel */}
+      <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-3">
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <div className="flex h-12 items-center justify-between rounded-2xl border border-white/12 bg-black/40 px-2">
+              <button
+                type="button"
+                onClick={() => step(-0.1)}
+                aria-label="Decrease bet"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-foreground"
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+              <span className="font-display text-[18px] tabular-nums text-foreground">{stake.toFixed(2)}</span>
+              <button
+                type="button"
+                onClick={() => step(0.1)}
+                aria-label="Increase bet"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-foreground"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="mt-2 grid grid-cols-4 gap-1.5">
+              {QUICK.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  onClick={() => setStake(q)}
+                  className="rounded-xl border border-white/10 bg-white/[0.04] py-1.5 text-[11px] text-muted-foreground"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Live players */}
-      <div className="rounded-3xl border border-white/12 bg-white/[0.05] p-4">
-        <p className="mb-3 text-[11px] uppercase tracking-widest text-muted-foreground">Live bets</p>
-        <div className="space-y-2">
+          {flying && betId ? (
+            <button
+              type="button"
+              onClick={() => void cashout()}
+              disabled={busy}
+              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-primary-foreground disabled:opacity-60"
+              style={{ background: "linear-gradient(180deg, hsl(var(--primary)), hsl(158 78% 30%))" }}
+            >
+              <span className="text-[11px] uppercase tracking-[0.2em] opacity-80">Cash out</span>
+              <span className="font-display text-[20px] tabular-nums">{fmt((queued ?? 0) * mult)}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={placeBet}
+              disabled={queued !== null || phase !== "betting"}
+              className="flex h-[86px] w-[42%] flex-col items-center justify-center rounded-2xl text-white disabled:opacity-45"
+              style={{ background: "linear-gradient(180deg, hsl(var(--aviator-glow)), hsl(var(--aviator)))" }}
+            >
+              <span className="text-[11px] uppercase tracking-[0.2em] opacity-90">
+                {queued !== null ? "Waiting" : "Bet"}
+              </span>
+              <span className="font-display text-[20px] tabular-nums">{stake.toFixed(2)}</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Live bets */}
+      <div className="rounded-[28px] border border-white/10 bg-white/[0.045] p-4">
+        <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <span>Player</span>
+          <span>Bet</span>
+          <span>Cash out</span>
+        </div>
+        <div className="space-y-1.5">
           {players.map((p, i) => (
-            <div key={`${p.name}-${i}`} className="flex items-center justify-between text-[12px]">
-              <span className="text-muted-foreground">{p.name}</span>
-              <span className="text-foreground">{fmt(p.bet)} Gram</span>
-              <span className={p.out ? "text-emerald-400" : "text-muted-foreground"}>{p.out ? `×${p.out}` : "—"}</span>
+            <div
+              key={`${p.name}-${i}`}
+              className="flex items-center justify-between rounded-xl bg-white/[0.03] px-3 py-2 text-[12px]"
+            >
+              <span className="w-1/3 text-muted-foreground">{p.name}</span>
+              <span className="w-1/3 text-center tabular-nums text-foreground">{fmt(p.bet)}</span>
+              <span className={`w-1/3 text-right tabular-nums ${p.out ? "text-primary" : "text-muted-foreground"}`}>
+                {p.out ? `${p.out.toFixed(2)}x` : "—"}
+              </span>
             </div>
           ))}
         </div>
