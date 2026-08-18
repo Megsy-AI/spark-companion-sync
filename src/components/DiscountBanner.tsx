@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
-import { Crown, Loader2, Sparkles, Wand2 } from "lucide-react";
+import { Loader2, Wand2 } from "lucide-react";
 import type { PaymentDiscount } from "@/hooks/use-payment-discount";
+import discountArt from "@/assets/discount-crown.jpg";
+
 
 const TIER_ACCENT: Record<PaymentDiscount["tier"], string> = {
   none: "text-primary",
