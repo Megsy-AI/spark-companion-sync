@@ -102,7 +102,8 @@ const ServersPage = () => {
   };
 
   const handleBuyWithTon = async (server: Server) => {
-    const price = priceFor(Number(server.price_ton));
+    // The server recomputes the discount on the intent; send the base price.
+    const price = Number(server.price_ton);
     setTonBusy(server.id);
     try {
       const transaction = await sendTonPayment(tonConnectUI, {
