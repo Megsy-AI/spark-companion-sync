@@ -201,9 +201,9 @@ const AviatorGame = () => {
       {/* Sky */}
       <div className="relative h-[290px] overflow-hidden rounded-3xl border border-white/12 bg-[radial-gradient(120%_90%_at_20%_110%,hsl(var(--primary)/0.35),transparent_60%),linear-gradient(180deg,#150c25,#05030c)]">
         <motion.div
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
-            backgroundImage: "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.5) 0deg 1deg, transparent 1deg 24deg)",
+            backgroundImage: "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.6) 0deg 0.6deg, transparent 0.6deg 30deg)",
           }}
           animate={{ rotate: flying ? 360 : 0 }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
