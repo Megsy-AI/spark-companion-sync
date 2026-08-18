@@ -215,25 +215,43 @@ const AviatorGame = () => {
         ))}
       </div>
 
-      {/* Sky */}
+      {/* Space */}
       <div
         className="relative h-[300px] overflow-hidden rounded-[28px] border border-white/10"
         style={{
           background:
-            "radial-gradient(130% 100% at 12% 100%, hsl(var(--aviator) / 0.30), transparent 62%), linear-gradient(180deg, hsl(var(--aviator-sky)), #04030a)",
+            "radial-gradient(120% 90% at 18% 8%, rgba(120,80,255,0.22), transparent 60%), radial-gradient(100% 80% at 88% 92%, hsl(var(--aviator) / 0.22), transparent 62%), linear-gradient(180deg, #070a1c 0%, #05061a 55%, #020209 100%)",
         }}
       >
-        {/* rotating rays */}
+        {/* starfield */}
+        <div className="absolute inset-0">
+          {STARS.map((s, i) => (
+            <motion.span
+              key={i}
+              className="absolute rounded-full bg-white"
+              style={{
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                width: s.size,
+                height: s.size,
+                boxShadow: s.size > 1.6 ? "0 0 6px rgba(255,255,255,0.8)" : undefined,
+              }}
+              animate={{ opacity: [s.opacity * 0.35, s.opacity, s.opacity * 0.35] }}
+              transition={{ duration: s.dur, delay: s.delay, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))}
+        </div>
+        {/* distant nebula drift */}
         <motion.div
-          className="absolute -inset-1/4 opacity-[0.07]"
+          className="pointer-events-none absolute -inset-1/4 opacity-40"
           style={{
-            backgroundImage:
-              "repeating-conic-gradient(from 0deg, rgba(255,255,255,0.85) 0deg 0.5deg, transparent 0.5deg 26deg)",
+            background:
+              "radial-gradient(38% 30% at 30% 40%, rgba(90,120,255,0.20), transparent 70%), radial-gradient(30% 26% at 70% 65%, rgba(255,60,120,0.16), transparent 70%)",
           }}
-          animate={{ rotate: flying ? 360 : 0 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          animate={{ x: flying ? [-12, 12, -12] : 0, y: [6, -6, 6] }}
+          transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
         />
-        {/* baseline ticks */}
+        {/* horizon line */}
         <div className="absolute inset-x-0 bottom-0 h-10 border-t border-white/[0.07]" />
 
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
