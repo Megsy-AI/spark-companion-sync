@@ -102,25 +102,24 @@ const AdWatchTask = () => {
     const loading = busy === tier;
 
     return (
-      <div className="rounded-2xl p-3.5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent/15">
-            <PlayCircle className="h-4 w-4 text-accent" />
+      <div className="paper-card p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="paper-eyebrow mb-1">{tier === "b" ? "Bonus round" : "Daily bonus"}</p>
+            <h3 className="font-display text-xl leading-none text-foreground">Watch {goal} ads</h3>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground truncate">Watch {goal} ads</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
-              {count}/{goal} watched
-            </p>
-          </div>
-          <span className="shrink-0 rounded-full bg-accent/15 px-2.5 py-1 font-display text-[11px] font-bold text-accent">
-            +{reward} Gram
-          </span>
+          <span className="chip-reward shrink-0 px-2.5 py-1 text-[11px]">+{reward} Gram</span>
         </div>
 
-        <div className="mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+        <div className="mt-4 flex items-center justify-between text-[11px] font-medium">
+          <span className="text-muted-foreground">Progress</span>
+          <span className="text-foreground">
+            {count} / {goal}
+          </span>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+            className="h-full rounded-full bg-primary"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4 }}
           />
@@ -130,9 +129,12 @@ const AdWatchTask = () => {
           type="button"
           disabled={!!busy}
           onClick={() => void (ready ? handleClaim(tier) : handleWatch(tier))}
-          className="mt-3 w-full rounded-full h-10 font-display text-xs uppercase tracking-widest bg-primary text-primary-foreground disabled:opacity-60 active:scale-[0.98] transition-all"
+          className={`mt-4 h-11 w-full text-sm font-semibold ${ready ? "btn-ink" : "btn-ink-soft"}`}
         >
-          {loading ? "Loading..." : ready ? `Claim ${reward} Gram` : "Watch Ad"}
+          <span className="inline-flex items-center justify-center gap-2">
+            {!ready && !loading && <PlayCircle className="h-4 w-4" />}
+            {loading ? "Loading..." : ready ? `Claim ${reward} Gram` : "Watch Ad"}
+          </span>
         </button>
       </div>
     );
@@ -141,19 +143,16 @@ const AdWatchTask = () => {
   return (
     <motion.div
       layout
-      className="relative rounded-2xl glass glass-panel border border-primary/30 mb-2.5"
+      className="mb-4 space-y-3"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="absolute -top-2 right-3 bg-accent text-accent-foreground text-[9px] font-display font-bold px-2 py-0.5 rounded-full shadow-lg">
-        PINNED
-      </div>
       {renderTier("a")}
-      <div className="mx-3.5 h-px bg-border/60" />
       {renderTier("b")}
     </motion.div>
   );
 };
+
 
 export default AdWatchTask;

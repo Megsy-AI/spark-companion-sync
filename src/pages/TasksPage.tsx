@@ -159,12 +159,12 @@ const TasksPage = () => {
   return (
     <div className="min-h-screen pb-28">
       <SpotlightHero title="Tasks">
-      <div id="tasks" className="px-5 pt-8">
+      <div id="tasks" className="px-5 pt-6">
 
       <Tabs defaultValue="tasks" className="w-full">
-        <TabsList className="w-full glass glass-subtle border border-border rounded-full h-11 mb-6 p-1">
-          <TabsTrigger value="tasks" className="flex-1 rounded-full font-display text-xs uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">Tasks</TabsTrigger>
-          <TabsTrigger value="referral" className="flex-1 rounded-full font-display text-xs uppercase tracking-widest data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all">Invite</TabsTrigger>
+        <TabsList className="mb-6 h-11 w-full rounded-full border border-border bg-muted/70 p-1">
+          <TabsTrigger value="tasks" className="flex-1 rounded-full text-xs font-semibold tracking-wide data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">Tasks</TabsTrigger>
+          <TabsTrigger value="referral" className="flex-1 rounded-full text-xs font-semibold tracking-wide data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">Invite</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tasks">
@@ -177,26 +177,23 @@ const TasksPage = () => {
               <p className="text-sm text-muted-foreground">Check back later for new tasks</p>
             </motion.div>
           ) : (
-            <div className="space-y-2.5">
+            <div className="pt-2">
+              <h2 className="paper-eyebrow mb-3">Partner missions</h2>
+              <div className="space-y-2">
               <AnimatePresence>
                 {availableTasks.map((task, i) => {
                   const label = REWARD_LABEL[task.reward_type] || "$NOVA";
 
                   return (
                     <motion.div key={task.id} layout
-                      className="relative rounded-2xl glass glass-panel cursor-pointer active:scale-[0.98] transition-all duration-200 hover:border-primary/40"
+                      className="paper-row cursor-pointer"
                       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }}
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: Math.min(i, 8) * 0.035 }}
                       onClick={() => void handleTask(task)}>
-                      <div className="rounded-2xl p-3.5">
-                        {task.is_pinned && (
-                          <div className="absolute -top-2 right-3 bg-accent text-accent-foreground text-[9px] font-display font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">
-                            PINNED
-                          </div>
-                        )}
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15">
-                            <Zap className="h-4 w-4 text-primary" />
+                      <div className="p-4">
+                        <div className="flex items-center gap-3.5">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action">
+                            <Zap className="h-4 w-4 text-action-foreground" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-foreground truncate">{task.title}</p>
@@ -206,13 +203,13 @@ const TasksPage = () => {
                                 : "Tap to open"}
                             </p>
                           </div>
-                          <span className="shrink-0 rounded-full bg-primary/15 px-2.5 py-1 font-display text-[11px] font-bold text-primary">
+                          <span className="shrink-0 text-xs font-bold text-primary">
                             +{task.reward_amount} {label}
                           </span>
                         </div>
                         {claiming === task.id && (
                           <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                            <motion.div className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+                            <motion.div className="h-full rounded-full bg-primary"
                               initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 1.2 }} />
                           </div>
                         )}
@@ -222,9 +219,11 @@ const TasksPage = () => {
                 })}
 
               </AnimatePresence>
+              </div>
             </div>
           )}
         </TabsContent>
+
 
         <TabsContent value="referral">
           <div className="space-y-4">
