@@ -272,55 +272,70 @@ const AviatorGame = () => {
           />
         </svg>
 
-        {/* rocket */}
+        {/* rocket — steady, upright, blue thruster */}
         <motion.div
           className="absolute"
           style={{ left: `${px}%`, bottom: `${py}%` }}
           animate={
             phase === "crashed"
-              ? { x: 260, y: -170, opacity: 0, rotate: -45 }
-              : { x: 0, y: flying ? [0, -4, 0] : 0, opacity: phase === "betting" ? 0.4 : 1, rotate: -45 }
+              ? { x: 240, y: -180, opacity: 0 }
+              : { x: 0, y: 0, opacity: phase === "betting" ? 0.45 : 1 }
           }
-          transition={phase === "crashed" ? { duration: 0.85, ease: "easeIn" } : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: phase === "crashed" ? 0.85 : 0.2, ease: phase === "crashed" ? "easeIn" : "linear" }}
         >
           <svg
-            viewBox="0 0 48 64"
-            className="h-14 w-11 drop-shadow-[0_0_16px_hsl(var(--aviator)/0.6)]"
+            viewBox="0 0 48 76"
+            className="h-16 w-11 drop-shadow-[0_0_18px_rgba(80,170,255,0.55)]"
             fill="none"
           >
             <defs>
               <linearGradient id="av-hull" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="60%" stopColor="#dfe6f5" />
-                <stop offset="100%" stopColor="#9aa6c4" />
+                <stop offset="58%" stopColor="#e2e8f6" />
+                <stop offset="100%" stopColor="#93a1c2" />
               </linearGradient>
               <linearGradient id="av-flame" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--aviator-glow))" />
-                <stop offset="100%" stopColor="hsl(var(--aviator) / 0)" />
+                <stop offset="0%" stopColor="#dff2ff" />
+                <stop offset="35%" stopColor="#4fb2ff" />
+                <stop offset="100%" stopColor="rgba(79,178,255,0)" />
               </linearGradient>
+              <radialGradient id="av-thrust-glow" cx="50%" cy="0%" r="80%">
+                <stop offset="0%" stopColor="rgba(120,200,255,0.85)" />
+                <stop offset="100%" stopColor="rgba(80,170,255,0)" />
+              </radialGradient>
             </defs>
+            {/* thruster glow */}
+            <motion.ellipse
+              cx="24"
+              cy="60"
+              rx="13"
+              ry="15"
+              fill="url(#av-thrust-glow)"
+              animate={{ opacity: flying ? [0.55, 0.95, 0.55] : 0.3 }}
+              transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
+            />
             {/* thruster flame */}
             <motion.path
-              d="M24 50 C28 55 27 60 24 64 C21 60 20 55 24 50 Z"
+              d="M24 50 C29 57 28 66 24 74 C20 66 19 57 24 50 Z"
               fill="url(#av-flame)"
-              animate={{ scaleY: flying ? [0.7, 1.15, 0.8] : 0.5, opacity: flying ? 1 : 0.4 }}
-              transition={{ duration: 0.45, repeat: Infinity, ease: "easeInOut" }}
+              animate={{ scaleY: flying ? [0.75, 1.15, 0.85] : 0.45, opacity: flying ? 1 : 0.45 }}
+              transition={{ duration: 0.4, repeat: Infinity, ease: "easeInOut" }}
               style={{ transformOrigin: "24px 50px" }}
             />
             {/* fins */}
-            <path d="M16 34 C10 40 9 46 11 50 L16 45 Z" fill="hsl(var(--aviator))" />
-            <path d="M32 34 C38 40 39 46 37 50 L32 45 Z" fill="hsl(var(--aviator))" />
+            <path d="M16 34 C10 40 9 46 11 50 L16 45 Z" fill="#5aa8ff" />
+            <path d="M32 34 C38 40 39 46 37 50 L32 45 Z" fill="#5aa8ff" />
             {/* hull */}
             <path
               d="M24 2 C33 12 37 24 37 36 C37 44 32 50 24 52 C16 50 11 44 11 36 C11 24 15 12 24 2 Z"
               fill="url(#av-hull)"
             />
             {/* window */}
-            <circle cx="24" cy="24" r="6" fill="#0b1030" opacity="0.9" />
-            <circle cx="24" cy="24" r="6" fill="none" stroke="hsl(var(--aviator))" strokeWidth="1.6" />
-            <circle cx="21.6" cy="21.8" r="1.6" fill="#ffffff" opacity="0.6" />
+            <circle cx="24" cy="24" r="6" fill="#08122e" opacity="0.92" />
+            <circle cx="24" cy="24" r="6" fill="none" stroke="#5aa8ff" strokeWidth="1.6" />
+            <circle cx="21.6" cy="21.8" r="1.6" fill="#ffffff" opacity="0.65" />
             {/* nose accent */}
-            <path d="M24 2 C27 7 29 12 30 17 C28 14 26 12 24 11 C22 12 20 14 18 17 C19 12 21 7 24 2 Z" fill="hsl(var(--aviator))" />
+            <path d="M24 2 C27 7 29 12 30 17 C28 14 26 12 24 11 C22 12 20 14 18 17 C19 12 21 7 24 2 Z" fill="#5aa8ff" />
           </svg>
         </motion.div>
 
