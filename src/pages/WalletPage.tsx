@@ -104,25 +104,46 @@ const WalletPage = () => {
     return (
       <div className="min-h-screen pb-28">
         <SpotlightHero title="Wallet">
-        <div className="px-5 pt-8 pb-10 flex flex-col items-center justify-center">
+        <div className="px-5 pt-8 pb-10 flex flex-col items-center">
         <motion.div
-          className="rounded-3xl glass glass-panel p-8 text-center max-w-sm w-full"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          className="paper-card w-full max-w-sm overflow-hidden p-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          <div className="mx-auto mb-5 rounded-full bg-foreground/[0.06] px-5 py-2">
-            <p className="text-[10px] uppercase tracking-[0.34em] text-muted-foreground">Wallet</p>
+          <p className="paper-eyebrow">Step 1 of 1</p>
+          <h1 className="mt-1 font-display text-3xl leading-none text-foreground">Connect your wallet</h1>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Link a TON wallet to deposit Gram, withdraw rewards and buy servers straight from your balance.
+          </p>
+
+          <div className="mt-5 space-y-2.5">
+            {[
+              { icon: <ArrowDownToLine className="h-4 w-4" />, label: "Deposit Gram in one tap" },
+              { icon: <ArrowUpFromLine className="h-4 w-4" />, label: "Withdraw from 1 Gram" },
+              { icon: <ShieldCheck className="h-4 w-4" />, label: "Non-custodial — you keep the keys" },
+            ].map((row) => (
+              <div key={row.label} className="paper-row flex items-center gap-3 px-3.5 py-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
+                  {row.icon}
+                </span>
+                <span className="text-xs font-medium text-foreground">{row.label}</span>
+              </div>
+            ))}
           </div>
-          <h1 className="text-2xl font-display font-bold text-foreground mb-2">Connect Wallet</h1>
-          <p className="text-sm text-muted-foreground mb-6">Connect your TON wallet to access deposits and withdrawals</p>
-          <Button onClick={handleConnectWallet} className="w-full h-12 rounded-2xl font-display glow-primary">Connect TON Wallet</Button>
-          <p className="text-[11px] text-muted-foreground mt-4 tracking-wider uppercase">Min. withdrawal · 1 Gram</p>
+
+          <button type="button" onClick={handleConnectWallet} className="btn-ink mt-6 h-12 w-full text-xs font-semibold uppercase tracking-widest">
+            Connect TON Wallet
+          </button>
+          <p className="mt-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            Tonkeeper · MyTonWallet · Telegram Wallet
+          </p>
         </motion.div>
         </div>
         </SpotlightHero>
       </div>
     );
   }
+
 
   const balances = [
     { symbol: "$NOVA", balance: user.siriBalance, color: "text-primary", icon: null, usd: 0 },
