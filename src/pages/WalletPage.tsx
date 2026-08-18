@@ -110,8 +110,7 @@ const WalletPage = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <p className="paper-eyebrow">Step 1 of 1</p>
-          <h1 className="mt-1 font-display text-3xl leading-none text-foreground">Connect your wallet</h1>
+          <h1 className="font-display text-3xl leading-none text-foreground">Connect your wallet</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Link a TON wallet to deposit Gram, withdraw rewards and buy servers straight from your balance.
           </p>
@@ -134,9 +133,7 @@ const WalletPage = () => {
           <button type="button" onClick={handleConnectWallet} className="btn-ink mt-6 h-12 w-full text-xs font-semibold uppercase tracking-widest">
             Connect TON Wallet
           </button>
-          <p className="mt-3 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            Tonkeeper · MyTonWallet · Telegram Wallet
-          </p>
+
         </motion.div>
         </div>
         </SpotlightHero>
@@ -269,125 +266,103 @@ const WalletPage = () => {
       <div className="px-5 pt-8">
 
 
-      {/* Total balance hero */}
+      {/* Total balance */}
       <motion.div
-        className="rounded-3xl glass glass-panel p-6 mb-5"
+        className="paper-card mb-4 p-6 text-center"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-2 text-center">Total Equivalent</p>
-        <h2 className="text-4xl font-display font-bold text-center text-gradient-primary mb-6">
+        <p className="paper-eyebrow">Total balance</p>
+        <h2 className="mt-1 font-display text-[44px] leading-none tracking-tight text-foreground">
           ${(user.tonBalance * 3.5 + user.usdtBalance + Number(user.rewardBalance ?? 0)).toFixed(2)}
         </h2>
-        <div className="grid grid-cols-2 gap-3">
-          <Button
+
+        <div className="mt-5 grid grid-cols-2 gap-2.5">
+          <button
+            type="button"
             onClick={() => setDepositOpen(true)}
-            className="h-12 rounded-2xl font-display text-sm glow-primary"
+            className="btn-ink h-12 gap-2 text-[11px] font-semibold uppercase tracking-widest"
           >
-            Deposit
-          </Button>
-          <Button
+            <ArrowDownToLine className="h-4 w-4" /> Deposit
+          </button>
+          <button
+            type="button"
             onClick={openWithdrawFlow}
-            variant="outline"
-            className="h-12 rounded-2xl font-display text-sm border-border bg-card/40"
+            className="btn-ink-soft h-12 gap-2 text-[11px] font-semibold uppercase tracking-widest"
           >
-            Withdraw
-          </Button>
+            <ArrowUpFromLine className="h-4 w-4" /> Withdraw
+          </button>
         </div>
       </motion.div>
 
-      {/* Staking entry */}
-      <motion.button
-        onClick={() => navigate("/staking")}
-        className="mb-5 w-full rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/15 to-accent/10 backdrop-blur-xl p-4 flex items-center justify-between"
+      {/* Assets — iOS grouped list */}
+      <p className="paper-eyebrow mb-2 px-1">Assets</p>
+      <motion.div
+        className="paper-card mb-4 divide-y divide-border/70 overflow-hidden p-0"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-primary" />
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-semibold text-foreground">Staking & Bonds</p>
-            <p className="text-[11px] text-muted-foreground">Lock Gram or $NOVA · earn daily yield</p>
-          </div>
-        </div>
-        <ChevronRight className="w-4 h-4 text-muted-foreground" />
-      </motion.button>
-
-      {/* Asset list */}
-      <div className="space-y-2.5 mb-6">
         {Number(user.rewardBalance ?? 0) > 0 && (
-          <motion.div
-            className="rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/15 to-accent/10 backdrop-blur-xl p-4 flex items-center justify-between"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">Locked USDT</p>
-                <p className="text-[11px] text-muted-foreground">Prize reward</p>
-              </div>
+          <div className="flex items-center gap-3 px-4 py-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
+              <Lock className="h-4 w-4" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-foreground">Locked USDT</p>
+              <p className="text-[11px] text-muted-foreground">Prize reward</p>
             </div>
             <div className="text-right">
-              <p className="text-lg font-display font-bold text-primary">
+              <p className="font-display text-base text-foreground">
                 {Number(user.rewardBalance).toLocaleString("en-US", { maximumFractionDigits: 2 })}
               </p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
+              <p className="text-[11px] text-muted-foreground">
                 ≈ ${Number(user.rewardBalance).toLocaleString("en-US", { maximumFractionDigits: 2 })}
               </p>
             </div>
-          </motion.div>
+          </div>
         )}
-        {balances.map((b, i) => (
-          <motion.div
-            key={b.symbol}
-            className="rounded-2xl glass glass-panel p-4 flex items-center justify-between"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 + i * 0.05 }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center">
-                {b.icon ? <img src={b.icon} alt={b.symbol} className="w-6 h-6 rounded-full" loading="lazy" /> : <img src={NOVA_ICON} alt="NOVA" className="w-7 h-7" loading="lazy" />}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
-                <p className="text-[11px] text-muted-foreground">Available</p>
-              </div>
+        {balances.map((b) => (
+          <div key={b.symbol} className="flex items-center gap-3 px-4 py-3.5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-card">
+              {b.icon
+                ? <img src={b.icon} alt={b.symbol} className="h-6 w-6 rounded-full" loading="lazy" />
+                : <img src={NOVA_ICON} alt="NOVA" className="h-6 w-6" loading="lazy" />}
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-foreground">{b.symbol}</p>
+              <p className="text-[11px] text-muted-foreground">Available</p>
             </div>
             <div className="text-right">
-              <p className={`text-lg font-display font-bold ${b.color}`}>
+              <p className="font-display text-base text-foreground">
                 {b.balance.toLocaleString("en-US", { maximumFractionDigits: 4 })}
               </p>
               {b.symbol !== "$NOVA" && (
-                <p className="text-[11px] text-muted-foreground mt-0.5">
+                <p className="text-[11px] text-muted-foreground">
                   ≈ ${b.usd.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                 </p>
               )}
             </div>
-          </motion.div>
+          </div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Connection card */}
+      {/* Connection */}
+      <p className="paper-eyebrow mb-2 px-1">Wallet</p>
       <motion.div
-        className="paper-card p-4"
+        className="paper-card divide-y divide-border/70 overflow-hidden p-0"
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.1 }}
       >
-        <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
+        <div className="flex items-center gap-3 px-4 py-3.5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-action text-action-foreground">
             <ShieldCheck className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="paper-eyebrow flex items-center gap-1.5">
+            <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              Wallet connected
+              Connected
             </p>
             <p className="truncate font-mono text-xs text-foreground">
               {address ? `${address.slice(0, 8)}…${address.slice(-6)}` : ""}
@@ -410,10 +385,11 @@ const WalletPage = () => {
         <button
           type="button"
           onClick={handleDisconnect}
-          className="btn-ink-soft mt-3 h-10 w-full gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-destructive"
+          className="flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-medium text-destructive"
         >
-          <Power className="h-3.5 w-3.5" /> Disconnect
+          <Power className="h-4 w-4" /> Disconnect
         </button>
+
       </motion.div>
 
 
